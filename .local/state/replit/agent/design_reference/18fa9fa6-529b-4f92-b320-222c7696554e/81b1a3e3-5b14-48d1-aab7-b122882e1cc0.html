@@ -1,0 +1,772 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlacementHub - Training & Placement Cell Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                }
+            },
+            fontFamily: {
+                sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+            }
+        },
+    };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(221.2 83.2% 53.3%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(221.2 83.2% 53.3%);
+            --radius: 12px;
+        }
+        
+        .gradient-primary {
+            background: linear-gradient(135deg, hsl(221.2 83.2% 53.3%) 0%, hsl(262.1 83.3% 57.8%) 100%);
+        }
+        
+        .gradient-secondary {
+            background: linear-gradient(135deg, hsl(262.1 83.3% 57.8%) 0%, hsl(196 100% 47.1%) 100%);
+        }
+        
+        .hover-scale {
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-fill {
+            transition: stroke-dashoffset 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground font-sans">
+
+    <!-- Navigation Header -->
+    <!-- @COMPONENT: NavigationHeader -->
+    <nav class="bg-card shadow-sm border-b border-border sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="gradient-primary text-primary-foreground px-3 py-2 rounded-lg font-bold text-lg">
+                        <i class="fas fa-graduation-cap mr-2"></i>PlacementHub
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-primary font-medium hover:text-primary/80 transition-colors">Dashboard</a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground transition-colors">Jobs</a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground transition-colors">Practice</a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground transition-colors">Community</a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground transition-colors">Analytics</a>
+                </div>
+                
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                        <div class="notification-dot"></div>
+                    </button>
+                    
+                    <!-- Messages -->
+                    <button class="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
+                        <i class="fas fa-comment text-lg"></i>
+                        <div class="notification-dot"></div>
+                    </button>
+                    
+                    <!-- Profile -->
+                    <div class="flex items-center space-x-3">
+                        <div class="hidden sm:block text-right">
+                            <div class="text-sm font-medium" data-bind="user.name">Sarah Johnson</div>
+                            <div class="text-xs text-muted-foreground" data-bind="user.role">Computer Science Student</div>
+                        </div>
+                        <!-- Profile photo of a young professional woman with a friendly smile -->
+                        <img src="https://pixabay.com/get/g6004cb1d3e0f842edb70f0addfad7721dc6c09d11f2b84288e4db17613f40791b7bb05284255b8181e1b27f1fa96fc0b54406ea723125cc2490afc4a139ccbf9_1280.jpg" alt="Profile Photo" class="w-10 h-10 rounded-full border-2 border-primary">
+                    </div>
+                    
+                    <!-- Mobile Menu Toggle -->
+                    <button class="md:hidden p-2 text-muted-foreground hover:text-foreground">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Welcome Section -->
+        <!-- @COMPONENT: WelcomeSection -->
+        <div class="mb-8">
+            <div class="gradient-primary rounded-2xl p-8 text-primary-foreground">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2" data-bind="greeting">Good morning, Sarah! 👋</h1>
+                        <p class="text-primary-foreground/80 text-lg">Ready to advance your career today?</p>
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
+                                <i class="fas fa-target mr-1"></i>85% Profile Complete
+                            </span>
+                            <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
+                                <i class="fas fa-fire mr-1"></i>7 Day Streak
+                            </span>
+                        </div>
+                    </div>
+                    <button class="mt-6 md:mt-0 bg-white text-primary px-6 py-3 rounded-xl font-semibold hover:bg-white/90 transition-colors hover-scale">
+                        <i class="fas fa-upload mr-2"></i>Upload Resume
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: WelcomeSection -->
+
+        <!-- Quick Actions -->
+        <!-- @COMPONENT: QuickActions -->
+        <div class="mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button class="bg-card hover:bg-accent p-4 rounded-xl border border-border hover-scale transition-all group">
+                    <div class="text-center">
+                        <div class="w-12 h-12 gradient-primary rounded-xl mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-search text-primary-foreground text-lg"></i>
+                        </div>
+                        <div class="font-semibold text-sm">Find Jobs</div>
+                        <div class="text-xs text-muted-foreground mt-1">45 new today</div>
+                    </div>
+                </button>
+                
+                <button class="bg-card hover:bg-accent p-4 rounded-xl border border-border hover-scale transition-all group">
+                    <div class="text-center">
+                        <div class="w-12 h-12 gradient-secondary rounded-xl mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-microphone text-primary-foreground text-lg"></i>
+                        </div>
+                        <div class="font-semibold text-sm">Mock Interview</div>
+                        <div class="text-xs text-muted-foreground mt-1">AI-powered</div>
+                    </div>
+                </button>
+                
+                <button class="bg-card hover:bg-accent p-4 rounded-xl border border-border hover-scale transition-all group">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-emerald-500 rounded-xl mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-file-alt text-white text-lg"></i>
+                        </div>
+                        <div class="font-semibold text-sm">Resume Scan</div>
+                        <div class="text-xs text-muted-foreground mt-1">Check ATS score</div>
+                    </div>
+                </button>
+                
+                <button class="bg-card hover:bg-accent p-4 rounded-xl border border-border hover-scale transition-all group">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-amber-500 rounded-xl mx-auto mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-users text-white text-lg"></i>
+                        </div>
+                        <div class="font-semibold text-sm">Job Fair</div>
+                        <div class="text-xs text-muted-foreground mt-1">3 live events</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: QuickActions -->
+
+        <!-- Main Dashboard Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Resume Score Card -->
+                <!-- @COMPONENT: ResumeScoreCard -->
+                <div class="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Resume Analysis</h2>
+                        <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-medium">
+                            Score: 78/100
+                        </span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        <!-- Progress Circle -->
+                        <div class="relative w-24 h-24">
+                            <svg class="w-full h-full progress-ring" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                                <circle cx="50" cy="50" r="45" stroke="url(#gradient)" stroke-width="8" fill="none" 
+                                        stroke-dasharray="283" stroke-dashoffset="62" class="progress-ring-fill"/>
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold">78</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Analysis Details -->
+                        <div class="flex-1">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">ATS Keywords</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-24 bg-muted rounded-full h-2">
+                                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 85%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">85%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">Skills Match</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-24 bg-muted rounded-full h-2">
+                                            <div class="bg-amber-500 h-2 rounded-full" style="width: 70%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">70%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm">Format Score</span>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-24 bg-muted rounded-full h-2">
+                                            <div class="bg-emerald-500 h-2 rounded-full" style="width: 90%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">90%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="mt-4 gradient-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover-scale transition-all">
+                                <i class="fas fa-magic mr-2"></i>Get AI Suggestions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ResumeScoreCard -->
+
+                <!-- Job Recommendations -->
+                <!-- @COMPONENT: JobRecommendations -->
+                <div class="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Recommended Jobs</h2>
+                        <button class="text-primary hover:text-primary/80 text-sm font-medium">
+                            View All <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- @MAP: jobRecommendations.map(job => ( -->
+                        <div class="border border-border rounded-xl p-4 hover:bg-accent transition-colors hover-scale cursor-pointer" data-mock="true">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <!-- Company logo placeholder for a tech startup -->
+                                    <img src="https://images.unsplash.com/photo-1549924231-f129b911e442?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=60&h=60" alt="TechCorp Logo" class="w-12 h-12 rounded-lg">
+                                    <div>
+                                        <h3 class="font-semibold" data-bind="job.title">Frontend Developer</h3>
+                                        <p class="text-muted-foreground text-sm" data-bind="job.company">TechCorp Solutions</p>
+                                        <div class="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                                            <span><i class="fas fa-map-marker-alt mr-1"></i>San Francisco, CA</span>
+                                            <span><i class="fas fa-dollar-sign mr-1"></i>$85k - $120k</span>
+                                            <span><i class="fas fa-clock mr-1"></i>2 days ago</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 mt-3">
+                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs">React</span>
+                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs">TypeScript</span>
+                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs">Node.js</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium mb-2">
+                                        92% Match
+                                    </div>
+                                    <button class="text-primary hover:text-primary/80">
+                                        <i class="fas fa-bookmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-border rounded-xl p-4 hover:bg-accent transition-colors hover-scale cursor-pointer" data-mock="true">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <!-- Company logo placeholder for a fintech company -->
+                                    <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=60&h=60" alt="FinanceFlow Logo" class="w-12 h-12 rounded-lg">
+                                    <div>
+                                        <h3 class="font-semibold" data-bind="job.title">Full Stack Engineer</h3>
+                                        <p class="text-muted-foreground text-sm" data-bind="job.company">FinanceFlow Inc</p>
+                                        <div class="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                                            <span><i class="fas fa-map-marker-alt mr-1"></i>Remote</span>
+                                            <span><i class="fas fa-dollar-sign mr-1"></i>$90k - $130k</span>
+                                            <span><i class="fas fa-clock mr-1"></i>1 week ago</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 mt-3">
+                                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-md text-xs">Python</span>
+                                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-md text-xs">Django</span>
+                                            <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-md text-xs">AWS</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium mb-2">
+                                        88% Match
+                                    </div>
+                                    <button class="text-primary hover:text-primary/80">
+                                        <i class="fas fa-bookmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-border rounded-xl p-4 hover:bg-accent transition-colors hover-scale cursor-pointer" data-mock="true">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <!-- Company logo placeholder for a data science company -->
+                                    <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=60&h=60" alt="DataViz Logo" class="w-12 h-12 rounded-lg">
+                                    <div>
+                                        <h3 class="font-semibold" data-bind="job.title">Junior Data Scientist</h3>
+                                        <p class="text-muted-foreground text-sm" data-bind="job.company">DataViz Analytics</p>
+                                        <div class="flex items-center space-x-4 mt-2 text-sm text-muted-foreground">
+                                            <span><i class="fas fa-map-marker-alt mr-1"></i>New York, NY</span>
+                                            <span><i class="fas fa-dollar-sign mr-1"></i>$75k - $95k</span>
+                                            <span><i class="fas fa-clock mr-1"></i>3 days ago</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 mt-3">
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs">Python</span>
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs">Machine Learning</span>
+                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs">SQL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium mb-2">
+                                        76% Match
+                                    </div>
+                                    <button class="text-primary hover:text-primary/80">
+                                        <i class="fas fa-bookmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: JobRecommendations -->
+
+                <!-- Skills Development -->
+                <!-- @COMPONENT: SkillsDevelopment -->
+                <div class="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Skill Development</h2>
+                        <button class="text-primary hover:text-primary/80 text-sm font-medium">
+                            View All Courses <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="border border-border rounded-xl p-4 hover:bg-accent transition-colors hover-scale cursor-pointer" data-mock="true">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fab fa-react text-blue-600 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold">Advanced React Patterns</h3>
+                                    <p class="text-sm text-muted-foreground mt-1">Master hooks, context, and performance optimization</p>
+                                    <div class="flex items-center justify-between mt-3">
+                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">8 weeks</span>
+                                        <span class="text-sm font-medium text-emerald-600">Free</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-border rounded-xl p-4 hover:bg-accent transition-colors hover-scale cursor-pointer" data-mock="true">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-database text-green-600 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold">SQL for Data Analysis</h3>
+                                    <p class="text-sm text-muted-foreground mt-1">Learn complex queries and database optimization</p>
+                                    <div class="flex items-center justify-between mt-3">
+                                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">6 weeks</span>
+                                        <span class="text-sm font-medium text-emerald-600">Free</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 gradient-secondary rounded-xl text-primary-foreground">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold">AI Skills Assessment</h3>
+                                <p class="text-sm text-primary-foreground/80 mt-1">Get personalized learning recommendations</p>
+                            </div>
+                            <button class="bg-white text-primary px-4 py-2 rounded-lg font-medium hover:bg-white/90 transition-colors">
+                                Start Assessment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: SkillsDevelopment -->
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+                
+                <!-- Progress Tracker -->
+                <!-- @COMPONENT: ProgressTracker -->
+                <div class="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                    <h2 class="text-lg font-bold mb-6">Your Progress</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium">Profile Completion</span>
+                                <span class="text-sm text-muted-foreground">85%</span>
+                            </div>
+                            <div class="w-full bg-muted rounded-full h-2">
+                                <div class="gradient-primary h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium">Interview Readiness</span>
+                                <span class="text-sm text-muted-foreground">70%</span>
+                            </div>
+                            <div class="w-full bg-muted rounded-full h-2">
+                                <div class="gradient-secondary h-2 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium">Skill Assessment</span>
+                                <span class="text-sm text-muted-foreground">92%</span>
+                            </div>
+                            <div class="w-full bg-muted rounded-full h-2">
+                                <div class="bg-emerald-500 h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-accent rounded-xl">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-trophy text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-sm">Next Goal</div>
+                                <div class="text-xs text-muted-foreground">Complete 3 mock interviews to unlock Premium features</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ProgressTracker -->
+
+                <!-- Upcoming Events -->
+                <!-- @COMPONENT: UpcomingEvents -->
+                <div class="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                    <h2 class="text-lg font-bold mb-6">Upcoming Events</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3" data-mock="true">
+                            <div class="w-2 h-16 gradient-primary rounded-full"></div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-sm">Tech Job Fair</div>
+                                <div class="text-xs text-muted-foreground">Tomorrow, 10:00 AM</div>
+                                <div class="text-xs text-muted-foreground mt-1">50+ companies participating</div>
+                                <button class="mt-2 text-primary text-xs font-medium hover:text-primary/80">
+                                    Register Now <i class="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3" data-mock="true">
+                            <div class="w-2 h-16 bg-emerald-500 rounded-full"></div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-sm">Resume Workshop</div>
+                                <div class="text-xs text-muted-foreground">Friday, 2:00 PM</div>
+                                <div class="text-xs text-muted-foreground mt-1">Learn ATS optimization</div>
+                                <button class="mt-2 text-emerald-600 text-xs font-medium hover:text-emerald-600/80">
+                                    Join Session <i class="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-3" data-mock="true">
+                            <div class="w-2 h-16 bg-amber-500 rounded-full"></div>
+                            <div class="flex-1">
+                                <div class="font-semibold text-sm">Interview with Google</div>
+                                <div class="text-xs text-muted-foreground">Next Monday, 3:30 PM</div>
+                                <div class="text-xs text-muted-foreground mt-1">Software Engineer Intern</div>
+                                <button class="mt-2 text-amber-600 text-xs font-medium hover:text-amber-600/80">
+                                    Prepare Now <i class="fas fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: UpcomingEvents -->
+
+                <!-- Recent Activity -->
+                <!-- @COMPONENT: RecentActivity -->
+                <div class="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                    <h2 class="text-lg font-bold mb-6">Recent Activity</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3" data-mock="true">
+                            <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-emerald-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm">Applied to Frontend Developer at TechCorp</div>
+                                <div class="text-xs text-muted-foreground">2 hours ago</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3" data-mock="true">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-upload text-blue-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm">Updated resume with new skills</div>
+                                <div class="text-xs text-muted-foreground">1 day ago</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3" data-mock="true">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-star text-purple-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm">Completed React course</div>
+                                <div class="text-xs text-muted-foreground">3 days ago</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3" data-mock="true">
+                            <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-microphone text-amber-600 text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm">Completed mock interview</div>
+                                <div class="text-xs text-muted-foreground">5 days ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: RecentActivity -->
+
+                <!-- Achievement Badges -->
+                <!-- @COMPONENT: AchievementBadges -->
+                <div class="bg-card rounded-2xl p-6 border border-border shadow-sm">
+                    <h2 class="text-lg font-bold mb-6">Recent Achievements</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-3 bg-accent rounded-xl" data-mock="true">
+                            <div class="w-12 h-12 bg-emerald-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                <i class="fas fa-fire text-white"></i>
+                            </div>
+                            <div class="font-semibold text-xs">7-Day Streak</div>
+                            <div class="text-xs text-muted-foreground">Daily login</div>
+                        </div>
+                        
+                        <div class="text-center p-3 bg-accent rounded-xl" data-mock="true">
+                            <div class="w-12 h-12 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                <i class="fas fa-graduation-cap text-white"></i>
+                            </div>
+                            <div class="font-semibold text-xs">Course Master</div>
+                            <div class="text-xs text-muted-foreground">5 completed</div>
+                        </div>
+                        
+                        <div class="text-center p-3 bg-accent rounded-xl" data-mock="true">
+                            <div class="w-12 h-12 bg-purple-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                <i class="fas fa-trophy text-white"></i>
+                            </div>
+                            <div class="font-semibold text-xs">Top Performer</div>
+                            <div class="text-xs text-muted-foreground">Top 10%</div>
+                        </div>
+                        
+                        <div class="text-center p-3 bg-accent rounded-xl" data-mock="true">
+                            <div class="w-12 h-12 bg-amber-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                <i class="fas fa-handshake text-white"></i>
+                            </div>
+                            <div class="font-semibold text-xs">Networker</div>
+                            <div class="text-xs text-muted-foreground">20 connections</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: AchievementBadges -->
+            </div>
+        </div>
+
+        <!-- Bottom Action Bar (Mobile) -->
+        <!-- @COMPONENT: MobileActionBar -->
+        <div class="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4 md:hidden">
+            <div class="flex justify-around items-center">
+                <button class="flex flex-col items-center space-y-1 text-primary">
+                    <i class="fas fa-home text-lg"></i>
+                    <span class="text-xs">Home</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 text-muted-foreground">
+                    <i class="fas fa-search text-lg"></i>
+                    <span class="text-xs">Jobs</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 text-muted-foreground">
+                    <i class="fas fa-plus text-lg"></i>
+                    <span class="text-xs">Apply</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 text-muted-foreground">
+                    <i class="fas fa-chart-bar text-lg"></i>
+                    <span class="text-xs">Stats</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 text-muted-foreground">
+                    <i class="fas fa-user text-lg"></i>
+                    <span class="text-xs">Profile</span>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: MobileActionBar -->
+    </main>
+
+    <!-- Chat Widget -->
+    <!-- @COMPONENT: ChatWidget -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button class="w-14 h-14 gradient-primary rounded-full shadow-lg flex items-center justify-center text-primary-foreground hover:scale-105 transition-transform">
+            <i class="fas fa-comment text-lg"></i>
+        </button>
+    </div>
+    <!-- @END_COMPONENT: ChatWidget -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            // Simple interaction handlers for demonstration
+            document.addEventListener('DOMContentLoaded', function() {
+                // Smooth scroll for any anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+
+                // Add click animation to buttons
+                document.querySelectorAll('button').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        if (!this.classList.contains('no-ripple')) {
+                            this.style.transform = 'scale(0.98)';
+                            setTimeout(() => {
+                                this.style.transform = '';
+                            }, 150);
+                        }
+                    });
+                });
+
+                // Simulate real-time updates for progress bars
+                const progressBars = document.querySelectorAll('[style*="width:"]');
+                progressBars.forEach(bar => {
+                    const currentWidth = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = currentWidth;
+                    }, 300);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

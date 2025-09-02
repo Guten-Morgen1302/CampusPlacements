@@ -1,0 +1,116 @@
+client:536 WebSocket connection to 'wss://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/?token=aAqt7UnLdHss' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=aAqt7UnLdHss' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+chunk-WERSD76P.js?v=09a10c5b:521 Warning: validateDOMNesting(...): <div> cannot appear as a descendant of <p>.
+    at div
+    at p
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GVTGVYSA.js?v=09a10c5b:42:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=09a10c5b:286:13
+    at _c9 (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/src/components/ui/dialog.tsx:182:12)
+    at div
+    at DialogHeader (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/src/components/ui/dialog.tsx:107:3)
+    at div
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GVTGVYSA.js?v=09a10c5b:42:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A765BH7Y.js?v=09a10c5b:61:7
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5S42QOQO.js?v=09a10c5b:79:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5S42QOQO.js?v=09a10c5b:56:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GVTGVYSA.js?v=09a10c5b:42:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-SU5C45ES.js?v=09a10c5b:29:5
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=09a10c5b:238:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=09a10c5b:161:58
+    at Presence (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S7CBW22B.js?v=09a10c5b:24:11)
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=09a10c5b:152:64
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5S42QOQO.js?v=09a10c5b:79:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5S42QOQO.js?v=09a10c5b:56:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-GVTGVYSA.js?v=09a10c5b:42:13
+    at https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A765BH7Y.js?v=09a10c5b:260:22
+    at Presence (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S7CBW22B.js?v=09a10c5b:24:11)
+    at Provider (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=09a10c5b:38:15)
+    at DialogPortal (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=09a10c5b:114:11)
+    at _c3 (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/src/components/ui/dialog.tsx:52:12)
+    at Provider (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=09a10c5b:38:15)
+    at Dialog (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=09a10c5b:55:5)
+    at JobApplicationModal (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/src/components/JobApplicationModal.tsx:46:47)
+    at div
+    at Jobs (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/src/pages/student/Jobs.tsx:278:48)
+    at Route (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=09a10c5b:323:16)
+    at Switch (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=09a10c5b:379:17)
+    at Router
+    at Provider (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-PLT6GTVM.js?v=09a10c5b:38:15)
+    at TooltipProvider (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=09a10c5b:64:5)
+    at QueryClientProvider (https://8e8826bd-6b5a-4e1d-b9e7-32b26536f39a-00-1q8h4a4caejph.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=09a10c5b:2805:3)
+    at App
+printWarning @ chunk-WERSD76P.js?v=09a10c5b:521
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1
+lockdown-install.js:1 SES_UNCAUGHT_EXCEPTION: null
+(anonymous) @ lockdown-install.js:1

@@ -1,0 +1,1551 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceNet - Training & Placement Cell Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    border: "var(--border)",
+                    ring: "var(--ring)",
+                    neon: {
+                        cyan: "#00FFFF",
+                        purple: "#8B5CF6",
+                        pink: "#FF006E",
+                        green: "#39FF14",
+                        blue: "#0080FF"
+                    }
+                },
+                fontFamily: {
+                    orbitron: ['Orbitron', 'monospace'],
+                    inter: ['Inter', 'sans-serif'],
+                    mono: ['JetBrains Mono', 'monospace']
+                },
+                animation: {
+                    'float': 'float 6s ease-in-out infinite',
+                    'rotate-y': 'rotateY 10s linear infinite',
+                    'pulse-neon': 'pulseNeon 2s ease-in-out infinite alternate',
+                    'gradient-shift': 'gradientShift 8s ease infinite',
+                    'particle-float': 'particleFloat 4s ease-in-out infinite',
+                    'magnetic': 'magnetic 0.3s ease-out',
+                    'glow': 'glow 2s ease-in-out infinite alternate',
+                }
+            }
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background: hsl(235 100% 4%);
+            --foreground: hsl(0 0% 98%);
+            --card: hsla(240 20% 6% / 0.3);
+            --card-foreground: hsl(0 0% 98%);
+            --primary: hsl(180 100% 50%);
+            --primary-foreground: hsl(235 100% 4%);
+            --secondary: hsl(270 60% 50%);
+            --secondary-foreground: hsl(0 0% 98%);
+            --muted: hsla(240 20% 15% / 0.5);
+            --muted-foreground: hsl(240 5% 65%);
+            --accent: hsl(330 100% 50%);
+            --accent-foreground: hsl(0 0% 98%);
+            --border: hsla(240 30% 18% / 0.4);
+            --ring: hsl(180 100% 50%);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .cyberpunk-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, 
+                hsla(235, 100%, 4%, 1) 0%,
+                hsla(270, 60%, 8%, 1) 25%,
+                hsla(300, 80%, 6%, 1) 50%,
+                hsla(240, 90%, 5%, 1) 75%,
+                hsla(235, 100%, 4%, 1) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .cyberpunk-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 25% 25%, hsla(180, 100%, 50%, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, hsla(270, 60%, 50%, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, hsla(330, 100%, 50%, 0.05) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius);
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 255, 255, 0.3);
+            box-shadow: 
+                0 20px 40px 0 rgba(31, 38, 135, 0.5),
+                0 0 30px rgba(0, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .neon-border {
+            position: relative;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 255, 0.3), 
+                rgba(139, 92, 246, 0.3), 
+                rgba(255, 0, 110, 0.3)) border-box;
+            border-radius: var(--radius);
+        }
+
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            background: linear-gradient(45deg, #00FFFF, #8B5CF6, #FF006E, #39FF14);
+            border-radius: inherit;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            animation: gradient-shift 3s linear infinite;
+        }
+
+        /* 3D Effects */
+        .card-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-3d:hover {
+            transform: rotateY(15deg) rotateX(5deg) translateZ(50px);
+        }
+
+        /* Floating Animation */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating:nth-child(2n) {
+            animation-delay: -2s;
+        }
+
+        .floating:nth-child(3n) {
+            animation-delay: -4s;
+        }
+
+        /* Neon Text */
+        .neon-text {
+            color: #00FFFF;
+            text-shadow: 
+                0 0 5px #00FFFF,
+                0 0 10px #00FFFF,
+                0 0 15px #00FFFF,
+                0 0 20px #00FFFF;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        /* Particle System */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00FFFF;
+            border-radius: 50%;
+            animation: particleFloat 4s ease-in-out infinite;
+            box-shadow: 0 0 6px #00FFFF;
+        }
+
+        /* Progress Rings */
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+
+        /* Cyberpunk Button */
+        .cyber-btn {
+            position: relative;
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #00FFFF;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            overflow: hidden;
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        .cyber-btn:hover {
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.2), rgba(139, 92, 246, 0.2));
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Magnetic Effect */
+        .magnetic {
+            transition: transform 0.2s ease-out;
+        }
+
+        /* Keyframes */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+            50% { transform: translateY(-20px) rotateZ(5deg); }
+        }
+
+        @keyframes rotateY {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        @keyframes pulseNeon {
+            0% { box-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary); }
+            100% { box-shadow: 0 0 20px var(--primary), 0 0 40px var(--primary); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: translateY(-100px) translateX(50px); 
+                opacity: 0.5; 
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 
+                    0 0 5px #00FFFF,
+                    0 0 10px #00FFFF,
+                    0 0 15px #00FFFF,
+                    0 0 20px #00FFFF;
+            }
+            to {
+                text-shadow: 
+                    0 0 10px #00FFFF,
+                    0 0 20px #00FFFF,
+                    0 0 30px #00FFFF,
+                    0 0 40px #00FFFF;
+            }
+        }
+
+        /* Holographic Effect */
+        .holographic {
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 255, 0.1) 0%,
+                rgba(139, 92, 246, 0.1) 25%,
+                rgba(255, 0, 110, 0.1) 50%,
+                rgba(57, 255, 20, 0.1) 75%,
+                rgba(0, 128, 255, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .card-3d:hover {
+                transform: rotateY(5deg) rotateX(2deg) translateZ(20px);
+            }
+            
+            .glass-card:hover {
+                transform: translateY(-2px) scale(1.01);
+            }
+        }
+
+        /* DNA Helix Loader */
+        .dna-loader {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        .dna-loader::before,
+        .dna-loader::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00FFFF;
+            animation: dna-rotate 1.5s infinite linear;
+        }
+
+        .dna-loader::before {
+            left: 0;
+            animation-delay: 0s;
+        }
+
+        .dna-loader::after {
+            right: 0;
+            animation-delay: 0.75s;
+        }
+
+        @keyframes dna-rotate {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            25% { transform: rotateX(90deg) rotateY(90deg); }
+            50% { transform: rotateX(180deg) rotateY(180deg); }
+            75% { transform: rotateX(270deg) rotateY(270deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #00FFFF, #8B5CF6);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #8B5CF6, #FF006E);
+        }
+
+        /* Enhanced Hover Effects */
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px) scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyberpunk-bg"></div>
+    
+    <!-- Particle System -->
+    <div id="particles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Navigation -->
+    <!-- @COMPONENT: Navigation [responsive navigation with role switching] -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-neon-cyan to-neon-purple flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-black text-lg"></i>
+                    </div>
+                    <h1 class="text-xl font-orbitron font-bold neon-text">PlaceNet</h1>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#dashboard" class="cyber-btn text-sm">Dashboard</a>
+                    <a href="#resume" class="cyber-btn text-sm">Resume</a>
+                    <a href="#jobs" class="cyber-btn text-sm">Jobs</a>
+                    <a href="#interview" class="cyber-btn text-sm">Practice</a>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- @STATE: userRole:string = 'student' -->
+                    <select class="glass-card px-3 py-2 rounded-lg text-sm bg-transparent border border-border/20 text-foreground">
+                        <option value="student" data-mock="true">Student</option>
+                        <option value="recruiter" data-mock="true">Recruiter</option>
+                        <option value="admin" data-mock="true">Admin</option>
+                    </select>
+                    
+                    <div class="relative">
+                        <button class="glass-card p-2 rounded-lg hover:bg-white/10 transition-all duration-300">
+                            <i class="fas fa-bell text-neon-cyan"></i>
+                            <span class="absolute -top-1 -right-1 bg-neon-pink w-3 h-3 rounded-full animate-pulse"></span>
+                        </button>
+                    </div>
+
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation -->
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-10">
+        <!-- Hero Section / Dashboard Overview -->
+        <!-- @COMPONENT: HeroDashboard [student dashboard with floating cards] -->
+        <section id="dashboard" class="min-h-screen px-4 sm:px-6 lg:px-8 py-10">
+            <div class="max-w-7xl mx-auto">
+                <!-- Welcome Header -->
+                <div class="text-center mb-12 floating">
+                    <h2 class="text-4xl md:text-6xl font-orbitron font-bold mb-4">
+                        Welcome back, <span class="neon-text glitch" data-bind="user.name">Alex</span>
+                    </h2>
+                    <p class="text-xl text-muted-foreground mb-8">Your placement journey continues...</p>
+                </div>
+
+                <!-- Dashboard Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <!-- Resume Score Card -->
+                    <div class="glass-card neon-border p-6 card-3d floating hover-lift">
+                        <div class="text-center">
+                            <div class="relative w-24 h-24 mx-auto mb-4">
+                                <svg class="progress-ring w-24 h-24" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"/>
+                                    <circle cx="50" cy="50" r="40" stroke="#00FFFF" stroke-width="8" fill="none"
+                                            stroke-dasharray="251.2" stroke-dashoffset="62.8" 
+                                            class="progress-ring-circle"/>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-2xl font-bold neon-text" data-bind="resumeScore">85</span>
+                                </div>
+                            </div>
+                            <h3 class="font-orbitron font-bold text-lg mb-2">Resume Score</h3>
+                            <p class="text-sm text-muted-foreground">ATS Optimized</p>
+                        </div>
+                    </div>
+
+                    <!-- Job Matches Card -->
+                    <div class="glass-card neon-border p-6 card-3d floating hover-lift">
+                        <div class="text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center">
+                                <i class="fas fa-briefcase text-2xl text-white"></i>
+                            </div>
+                            <h3 class="font-orbitron font-bold text-lg mb-2">Job Matches</h3>
+                            <p class="text-3xl font-bold neon-text mb-2" data-bind="jobMatches.count">12</p>
+                            <p class="text-sm text-muted-foreground">New opportunities</p>
+                        </div>
+                    </div>
+
+                    <!-- Interview Practice Card -->
+                    <div class="glass-card neon-border p-6 card-3d floating hover-lift">
+                        <div class="text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-green to-neon-cyan flex items-center justify-center">
+                                <i class="fas fa-microphone text-2xl text-black"></i>
+                            </div>
+                            <h3 class="font-orbitron font-bold text-lg mb-2">Interview Ready</h3>
+                            <p class="text-3xl font-bold neon-text mb-2" data-bind="interviewScore">78%</p>
+                            <p class="text-sm text-muted-foreground">Confidence Level</p>
+                        </div>
+                    </div>
+
+                    <!-- Streak Card -->
+                    <div class="glass-card neon-border p-6 card-3d floating hover-lift">
+                        <div class="text-center">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-pink to-neon-purple flex items-center justify-center">
+                                <i class="fas fa-fire text-2xl text-white"></i>
+                            </div>
+                            <h3 class="font-orbitron font-bold text-lg mb-2">Learning Streak</h3>
+                            <p class="text-3xl font-bold neon-text mb-2" data-bind="streak.days">15</p>
+                            <p class="text-sm text-muted-foreground">Days active</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Recent Job Recommendations -->
+                    <div class="lg:col-span-2 glass-card neon-border p-6 hover-lift">
+                        <h3 class="font-orbitron font-bold text-xl mb-6 neon-text">🔥 Hot Job Matches</h3>
+                        <!-- @MAP: jobRecommendations.map(job => ( -->
+                        <div class="space-y-4">
+                            <div class="glass-card p-4 border border-border/20 hover:border-neon-cyan/30 transition-all duration-300">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-neon-blue to-neon-cyan flex items-center justify-center">
+                                            <i class="fab fa-google text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-lg" data-mock="true">Software Engineer</h4>
+                                            <p class="text-muted-foreground" data-mock="true">Google • Remote • ₹12-18 LPA</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-3 py-1 bg-neon-green/20 text-neon-green rounded-full text-sm font-semibold">96% Match</span>
+                                        <button class="cyber-btn text-xs">Apply</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-card p-4 border border-border/20 hover:border-neon-purple/30 transition-all duration-300">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center">
+                                            <i class="fab fa-microsoft text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-lg" data-mock="true">Frontend Developer</h4>
+                                            <p class="text-muted-foreground" data-mock="true">Microsoft • Bangalore • ₹15-22 LPA</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-3 py-1 bg-neon-cyan/20 text-neon-cyan rounded-full text-sm font-semibold">92% Match</span>
+                                        <button class="cyber-btn text-xs">Apply</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="glass-card p-4 border border-border/20 hover:border-neon-pink/30 transition-all duration-300">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-neon-pink to-neon-purple flex items-center justify-center">
+                                            <i class="fab fa-amazon text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-lg" data-mock="true">Cloud Engineer</h4>
+                                            <p class="text-muted-foreground" data-mock="true">Amazon • Hyderabad • ₹18-25 LPA</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-3 py-1 bg-neon-purple/20 text-neon-purple rounded-full text-sm font-semibold">89% Match</span>
+                                        <button class="cyber-btn text-xs">Apply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+
+                    <!-- Quick Actions & Progress -->
+                    <div class="space-y-6">
+                        <!-- Quick Actions -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">⚡ Quick Actions</h3>
+                            <div class="space-y-3">
+                                <button class="w-full cyber-btn" data-event="click:openResumeScanner">
+                                    <i class="fas fa-file-upload mr-2"></i>Scan Resume
+                                </button>
+                                <button class="w-full cyber-btn" data-event="click:startMockInterview">
+                                    <i class="fas fa-microphone mr-2"></i>Mock Interview
+                                </button>
+                                <button class="w-full cyber-btn" data-event="click:openJobFair">
+                                    <i class="fas fa-video mr-2"></i>Virtual Job Fair
+                                </button>
+                                <button class="w-full cyber-btn" data-event="click:generateCoverLetter">
+                                    <i class="fas fa-robot mr-2"></i>AI Cover Letter
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Skill Progress -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">🚀 Skill Progress</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm" data-mock="true">React.js</span>
+                                        <span class="text-sm neon-text" data-bind="skills.react">85%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-700 rounded-full h-2">
+                                        <div class="bg-gradient-to-r from-neon-cyan to-neon-blue h-2 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm" data-mock="true">Python</span>
+                                        <span class="text-sm neon-text" data-bind="skills.python">78%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-700 rounded-full h-2">
+                                        <div class="bg-gradient-to-r from-neon-purple to-neon-pink h-2 rounded-full" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm" data-mock="true">System Design</span>
+                                        <span class="text-sm neon-text" data-bind="skills.systemDesign">65%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-700 rounded-full h-2">
+                                        <div class="bg-gradient-to-r from-neon-green to-neon-cyan h-2 rounded-full" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: HeroDashboard -->
+
+        <!-- Resume Scanner Section -->
+        <!-- @COMPONENT: ResumeScanner [AI-powered resume analysis with glassmorphic upload] -->
+        <section id="resume" class="min-h-screen px-4 sm:px-6 lg:px-8 py-20">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-orbitron font-bold mb-4 neon-text">🤖 AI Resume Scanner</h2>
+                    <p class="text-xl text-muted-foreground">Get instant ATS optimization and skill gap analysis</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Upload Area -->
+                    <div class="glass-card neon-border p-8 hover-lift">
+                        <div class="text-center">
+                            <div class="border-2 border-dashed border-neon-cyan/30 rounded-xl p-8 mb-6 hover:border-neon-cyan/50 transition-colors duration-300">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-neon-cyan to-neon-blue flex items-center justify-center animate-pulse">
+                                    <i class="fas fa-cloud-upload-alt text-2xl text-white"></i>
+                                </div>
+                                <h3 class="font-orbitron font-bold text-lg mb-2">Drop your resume here</h3>
+                                <p class="text-muted-foreground mb-4">or click to browse files</p>
+                                <button class="cyber-btn" data-event="click:uploadResume">
+                                    <i class="fas fa-upload mr-2"></i>Choose File
+                                </button>
+                            </div>
+                            <p class="text-sm text-muted-foreground">Supports PDF, DOC, DOCX • Max 5MB</p>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Results -->
+                    <div class="glass-card neon-border p-8 hover-lift">
+                        <h3 class="font-orbitron font-bold text-xl mb-6 neon-text">📊 Analysis Results</h3>
+                        
+                        <!-- Overall Score -->
+                        <div class="text-center mb-8">
+                            <div class="relative w-32 h-32 mx-auto mb-4">
+                                <svg class="progress-ring w-32 h-32" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"/>
+                                    <circle cx="50" cy="50" r="40" stroke="url(#gradient)" stroke-width="8" fill="none"
+                                            stroke-dasharray="251.2" stroke-dashoffset="62.8" 
+                                            class="progress-ring-circle"/>
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#00FFFF;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-3xl font-bold neon-text" data-bind="resumeAnalysis.score">85</span>
+                                </div>
+                            </div>
+                            <h4 class="font-orbitron font-bold text-lg">ATS Score</h4>
+                        </div>
+
+                        <!-- Breakdown -->
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 glass-card border border-border/20">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-keywords text-neon-green"></i>
+                                    <span data-mock="true">Keywords Match</span>
+                                </div>
+                                <span class="text-neon-green font-semibold" data-bind="resumeAnalysis.keywords">92%</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 glass-card border border-border/20">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-format text-neon-cyan"></i>
+                                    <span data-mock="true">Format Score</span>
+                                </div>
+                                <span class="text-neon-cyan font-semibold" data-bind="resumeAnalysis.format">88%</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 glass-card border border-border/20">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-cogs text-neon-purple"></i>
+                                    <span data-mock="true">Skills Coverage</span>
+                                </div>
+                                <span class="text-neon-purple font-semibold" data-bind="resumeAnalysis.skills">76%</span>
+                            </div>
+                        </div>
+
+                        <button class="w-full cyber-btn mt-6" data-event="click:downloadReport">
+                            <i class="fas fa-download mr-2"></i>Download Full Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Suggestions Panel -->
+                <div class="mt-8 glass-card neon-border p-8 hover-lift">
+                    <h3 class="font-orbitron font-bold text-xl mb-6 neon-text">💡 AI Suggestions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-4 glass-card border border-border/20">
+                            <i class="fas fa-plus-circle text-3xl text-neon-green mb-3"></i>
+                            <h4 class="font-semibold mb-2" data-mock="true">Add Keywords</h4>
+                            <p class="text-sm text-muted-foreground" data-mock="true">Include "React", "AWS", "Agile" for better matches</p>
+                        </div>
+                        <div class="text-center p-4 glass-card border border-border/20">
+                            <i class="fas fa-edit text-3xl text-neon-cyan mb-3"></i>
+                            <h4 class="font-semibold mb-2" data-mock="true">Improve Format</h4>
+                            <p class="text-sm text-muted-foreground" data-mock="true">Use bullet points and quantify achievements</p>
+                        </div>
+                        <div class="text-center p-4 glass-card border border-border/20">
+                            <i class="fas fa-chart-line text-3xl text-neon-purple mb-3"></i>
+                            <h4 class="font-semibold mb-2" data-mock="true">Skill Gaps</h4>
+                            <p class="text-sm text-muted-foreground" data-mock="true">Consider learning Docker and Kubernetes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: ResumeScanner -->
+
+        <!-- Interview Practice Section -->
+        <!-- @COMPONENT: InterviewPractice [AI mock interview with real-time feedback] -->
+        <section id="interview" class="min-h-screen px-4 sm:px-6 lg:px-8 py-20">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-orbitron font-bold mb-4 neon-text">🎯 AI Interview Practice</h2>
+                    <p class="text-xl text-muted-foreground">Practice with AI interviewer and get instant feedback</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- AI Interviewer -->
+                    <div class="lg:col-span-2 glass-card neon-border p-8 hover-lift">
+                        <div class="aspect-video bg-gradient-to-br from-neon-cyan/10 to-neon-purple/10 rounded-xl mb-6 flex items-center justify-center relative overflow-hidden">
+                            <!-- AI Avatar placeholder -->
+                            <div class="w-32 h-32 rounded-full bg-gradient-to-r from-neon-cyan to-neon-purple flex items-center justify-center animate-pulse">
+                                <i class="fas fa-robot text-4xl text-white"></i>
+                            </div>
+                            
+                            <!-- Floating particles around AI -->
+                            <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-neon-cyan rounded-full animate-bounce"></div>
+                            <div class="absolute top-1/3 right-1/4 w-2 h-2 bg-neon-purple rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+                            <div class="absolute bottom-1/4 left-1/3 w-2 h-2 bg-neon-pink rounded-full animate-bounce" style="animation-delay: 1s;"></div>
+                            
+                            <!-- Speaking indicator -->
+                            <div class="absolute bottom-4 left-4 flex items-center space-x-2 glass-card px-3 py-2 rounded-full">
+                                <div class="w-2 h-2 bg-neon-green rounded-full animate-pulse"></div>
+                                <span class="text-sm" data-mock="true">AI Speaking...</span>
+                            </div>
+                        </div>
+
+                        <!-- Question Display -->
+                        <div class="glass-card border border-border/20 p-6 mb-6">
+                            <h3 class="font-orbitron font-bold text-lg mb-3 neon-text">Current Question</h3>
+                            <p class="text-foreground" data-mock="true">"Tell me about a challenging project you worked on and how you overcame the obstacles."</p>
+                        </div>
+
+                        <!-- Recording Controls -->
+                        <div class="flex items-center justify-center space-x-4">
+                            <button class="cyber-btn" data-event="click:startRecording">
+                                <i class="fas fa-microphone mr-2"></i>Start Recording
+                            </button>
+                            <button class="cyber-btn" data-event="click:pauseInterview">
+                                <i class="fas fa-pause mr-2"></i>Pause
+                            </button>
+                            <button class="cyber-btn" data-event="click:nextQuestion">
+                                <i class="fas fa-forward mr-2"></i>Next Question
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Feedback -->
+                    <div class="space-y-6">
+                        <!-- Confidence Meter -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">📈 Real-time Feedback</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm" data-mock="true">Confidence</span>
+                                        <span class="text-sm neon-text" data-bind="feedback.confidence">78%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-700 rounded-full h-3">
+                                        <div class="bg-gradient-to-r from-neon-green to-neon-cyan h-3 rounded-full transition-all duration-500" style="width: 78%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm" data-mock="true">Clarity</span>
+                                        <span class="text-sm neon-text" data-bind="feedback.clarity">85%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-700 rounded-full h-3">
+                                        <div class="bg-gradient-to-r from-neon-cyan to-neon-blue h-3 rounded-full transition-all duration-500" style="width: 85%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="text-sm" data-mock="true">Pace</span>
+                                        <span class="text-sm neon-text" data-bind="feedback.pace">92%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-700 rounded-full h-3">
+                                        <div class="bg-gradient-to-r from-neon-purple to-neon-pink h-3 rounded-full transition-all duration-500" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session Stats -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">⏱️ Session Stats</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span data-mock="true">Questions Answered</span>
+                                    <span class="neon-text font-semibold" data-bind="session.questionsAnswered">3/10</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span data-mock="true">Time Elapsed</span>
+                                    <span class="neon-text font-semibold" data-bind="session.timeElapsed">12:30</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span data-mock="true">Average Score</span>
+                                    <span class="neon-text font-semibold" data-bind="session.averageScore">82%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Tips -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">💡 Live Tips</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-start space-x-2">
+                                    <i class="fas fa-lightbulb text-neon-green mt-1"></i>
+                                    <span data-mock="true">Maintain eye contact with the camera</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <i class="fas fa-volume-up text-neon-cyan mt-1"></i>
+                                    <span data-mock="true">Speak a bit louder for clarity</span>
+                                </div>
+                                <div class="flex items-start space-x-2">
+                                    <i class="fas fa-clock text-neon-purple mt-1"></i>
+                                    <span data-mock="true">Take your time to think before answering</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: InterviewPractice -->
+
+        <!-- Recruiter Dashboard Section -->
+        <!-- @COMPONENT: RecruiterDashboard [cyberpunk-style kanban board and analytics] -->
+        <section id="recruiter" class="min-h-screen px-4 sm:px-6 lg:px-8 py-20">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-orbitron font-bold mb-4 neon-text">🎯 Recruiter Command Center</h2>
+                    <p class="text-xl text-muted-foreground">Cyberpunk-powered talent acquisition dashboard</p>
+                </div>
+
+                <!-- Kanban Board -->
+                <div class="mb-12">
+                    <h3 class="font-orbitron font-bold text-2xl mb-6 neon-text">🚀 Candidate Pipeline</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <!-- Applied Column -->
+                        <div class="glass-card neon-border p-4 hover-lift">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-orbitron font-bold text-lg">Applied</h4>
+                                <span class="px-3 py-1 bg-neon-cyan/20 text-neon-cyan rounded-full text-sm font-semibold" data-bind="candidates.applied.count">24</span>
+                            </div>
+                            <!-- @MAP: appliedCandidates.map(candidate => ( -->
+                            <div class="space-y-3">
+                                <div class="glass-card p-3 border border-border/20 hover:border-neon-cyan/30 transition-all duration-300 cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-cyan to-neon-blue"></div>
+                                        <div class="flex-1">
+                                            <h5 class="font-semibold text-sm" data-mock="true">Arjun Sharma</h5>
+                                            <p class="text-xs text-muted-foreground" data-mock="true">React Developer</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 flex justify-between items-center">
+                                        <span class="text-xs text-neon-cyan" data-mock="true">95% Match</span>
+                                        <span class="text-xs text-muted-foreground" data-mock="true">2h ago</span>
+                                    </div>
+                                </div>
+
+                                <div class="glass-card p-3 border border-border/20 hover:border-neon-cyan/30 transition-all duration-300 cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink"></div>
+                                        <div class="flex-1">
+                                            <h5 class="font-semibold text-sm" data-mock="true">Priya Patel</h5>
+                                            <p class="text-xs text-muted-foreground" data-mock="true">Full Stack Dev</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 flex justify-between items-center">
+                                        <span class="text-xs text-neon-purple" data-mock="true">88% Match</span>
+                                        <span class="text-xs text-muted-foreground" data-mock="true">5h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+
+                        <!-- Screening Column -->
+                        <div class="glass-card neon-border p-4 hover-lift">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-orbitron font-bold text-lg">Screening</h4>
+                                <span class="px-3 py-1 bg-neon-purple/20 text-neon-purple rounded-full text-sm font-semibold" data-bind="candidates.screening.count">8</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="glass-card p-3 border border-border/20 hover:border-neon-purple/30 transition-all duration-300 cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-green to-neon-cyan"></div>
+                                        <div class="flex-1">
+                                            <h5 class="font-semibold text-sm" data-mock="true">Rahul Kumar</h5>
+                                            <p class="text-xs text-muted-foreground" data-mock="true">Backend Engineer</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 flex justify-between items-center">
+                                        <span class="text-xs text-neon-green" data-mock="true">92% Match</span>
+                                        <div class="dna-loader"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interview Column -->
+                        <div class="glass-card neon-border p-4 hover-lift">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-orbitron font-bold text-lg">Interview</h4>
+                                <span class="px-3 py-1 bg-neon-green/20 text-neon-green rounded-full text-sm font-semibold" data-bind="candidates.interview.count">5</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="glass-card p-3 border border-border/20 hover:border-neon-green/30 transition-all duration-300 cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-pink to-neon-purple"></div>
+                                        <div class="flex-1">
+                                            <h5 class="font-semibold text-sm" data-mock="true">Sneha Reddy</h5>
+                                            <p class="text-xs text-muted-foreground" data-mock="true">UI/UX Designer</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 flex justify-between items-center">
+                                        <span class="text-xs text-neon-pink" data-mock="true">Tomorrow 2PM</span>
+                                        <i class="fas fa-video text-neon-green"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hired Column -->
+                        <div class="glass-card neon-border p-4 hover-lift">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-orbitron font-bold text-lg">Hired</h4>
+                                <span class="px-3 py-1 bg-neon-pink/20 text-neon-pink rounded-full text-sm font-semibold" data-bind="candidates.hired.count">3</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="glass-card p-3 border border-border/20 hover:border-neon-pink/30 transition-all duration-300 cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-neon-cyan to-neon-purple"></div>
+                                        <div class="flex-1">
+                                            <h5 class="font-semibold text-sm" data-mock="true">Vikash Singh</h5>
+                                            <p class="text-xs text-muted-foreground" data-mock="true">DevOps Engineer</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 flex items-center space-x-2">
+                                        <i class="fas fa-check-circle text-neon-green text-xs"></i>
+                                        <span class="text-xs text-neon-green" data-mock="true">Onboarded</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Dashboard -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Recruitment Metrics -->
+                    <div class="lg:col-span-2 glass-card neon-border p-6 hover-lift">
+                        <h3 class="font-orbitron font-bold text-xl mb-6 neon-text">📊 Recruitment Analytics</h3>
+                        
+                        <!-- Metrics Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            <div class="text-center glass-card p-4 border border-border/20">
+                                <div class="text-2xl font-bold neon-text" data-bind="metrics.totalApplications">156</div>
+                                <div class="text-sm text-muted-foreground">Total Applications</div>
+                            </div>
+                            <div class="text-center glass-card p-4 border border-border/20">
+                                <div class="text-2xl font-bold neon-text" data-bind="metrics.interviewRate">23%</div>
+                                <div class="text-sm text-muted-foreground">Interview Rate</div>
+                            </div>
+                            <div class="text-center glass-card p-4 border border-border/20">
+                                <div class="text-2xl font-bold neon-text" data-bind="metrics.hireRate">8%</div>
+                                <div class="text-sm text-muted-foreground">Hire Rate</div>
+                            </div>
+                            <div class="text-center glass-card p-4 border border-border/20">
+                                <div class="text-2xl font-bold neon-text" data-bind="metrics.avgTimeToHire">15</div>
+                                <div class="text-sm text-muted-foreground">Days to Hire</div>
+                            </div>
+                        </div>
+
+                        <!-- Skill Heatmap -->
+                        <div>
+                            <h4 class="font-orbitron font-bold text-lg mb-4 neon-text">🔥 Skill Demand Heatmap</h4>
+                            <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+                                <div class="text-center p-3 glass-card border border-neon-cyan/30">
+                                    <div class="text-sm font-semibold" data-mock="true">React</div>
+                                    <div class="text-xs text-neon-cyan" data-mock="true">Hot 🔥</div>
+                                </div>
+                                <div class="text-center p-3 glass-card border border-neon-purple/30">
+                                    <div class="text-sm font-semibold" data-mock="true">Python</div>
+                                    <div class="text-xs text-neon-purple" data-mock="true">High</div>
+                                </div>
+                                <div class="text-center p-3 glass-card border border-neon-green/30">
+                                    <div class="text-sm font-semibold" data-mock="true">AWS</div>
+                                    <div class="text-xs text-neon-green" data-mock="true">Rising</div>
+                                </div>
+                                <div class="text-center p-3 glass-card border border-neon-pink/30">
+                                    <div class="text-sm font-semibold" data-mock="true">Docker</div>
+                                    <div class="text-xs text-neon-pink" data-mock="true">Medium</div>
+                                </div>
+                                <div class="text-center p-3 glass-card border border-neon-blue/30">
+                                    <div class="text-sm font-semibold" data-mock="true">Node.js</div>
+                                    <div class="text-xs text-neon-blue" data-mock="true">Stable</div>
+                                </div>
+                                <div class="text-center p-3 glass-card border border-border/20">
+                                    <div class="text-sm font-semibold" data-mock="true">Vue</div>
+                                    <div class="text-xs text-muted-foreground" data-mock="true">Low</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions & Filters -->
+                    <div class="space-y-6">
+                        <!-- Search & Filters -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">🔍 Smart Search</h3>
+                            <div class="space-y-4">
+                                <input type="text" placeholder="Search candidates..." 
+                                       class="w-full glass-card px-4 py-3 rounded-lg bg-transparent border border-border/20 text-foreground placeholder-muted-foreground focus:border-neon-cyan/50 transition-colors duration-300">
+                                
+                                <div class="space-y-2">
+                                    <label class="text-sm text-muted-foreground">Skills</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="px-3 py-1 bg-neon-cyan/20 text-neon-cyan rounded-full text-sm cursor-pointer hover:bg-neon-cyan/30 transition-colors" data-mock="true">React</span>
+                                        <span class="px-3 py-1 bg-neon-purple/20 text-neon-purple rounded-full text-sm cursor-pointer hover:bg-neon-purple/30 transition-colors" data-mock="true">Python</span>
+                                        <span class="px-3 py-1 bg-neon-green/20 text-neon-green rounded-full text-sm cursor-pointer hover:bg-neon-green/30 transition-colors" data-mock="true">AWS</span>
+                                    </div>
+                                </div>
+
+                                <button class="w-full cyber-btn" data-event="click:searchCandidates">
+                                    <i class="fas fa-search mr-2"></i>AI Search
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Job Posting -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">📝 Quick Actions</h3>
+                            <div class="space-y-3">
+                                <button class="w-full cyber-btn" data-event="click:postNewJob">
+                                    <i class="fas fa-plus mr-2"></i>Post New Job
+                                </button>
+                                <button class="w-full cyber-btn" data-event="click:scheduleDrive">
+                                    <i class="fas fa-calendar mr-2"></i>Schedule Drive
+                                </button>
+                                <button class="w-full cyber-btn" data-event="click:exportData">
+                                    <i class="fas fa-download mr-2"></i>Export Reports
+                                </button>
+                                <button class="w-full cyber-btn" data-event="click:analyzePool">
+                                    <i class="fas fa-chart-line mr-2"></i>Analyze Talent Pool
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Top Colleges -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">🏆 Top Colleges</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm" data-mock="true">IIT Delhi</span>
+                                    <span class="text-neon-cyan font-semibold" data-bind="colleges.iitDelhi">24</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm" data-mock="true">BITS Pilani</span>
+                                    <span class="text-neon-purple font-semibold" data-bind="colleges.bitsPilani">18</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm" data-mock="true">NIT Trichy</span>
+                                    <span class="text-neon-green font-semibold" data-bind="colleges.nitTrichy">15</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: RecruiterDashboard -->
+
+        <!-- Virtual Job Fair -->
+        <!-- @COMPONENT: VirtualJobFair [3D booth experience with floating elements] -->
+        <section id="job-fair" class="min-h-screen px-4 sm:px-6 lg:px-8 py-20">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-orbitron font-bold mb-4 neon-text">🌐 Virtual Job Fair</h2>
+                    <p class="text-xl text-muted-foreground">Enter the metaverse of opportunities</p>
+                </div>
+
+                <!-- 3D Job Fair Environment -->
+                <div class="glass-card neon-border p-8 mb-8 hover-lift">
+                    <div class="aspect-video bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 rounded-xl relative overflow-hidden">
+                        <!-- 3D Environment Placeholder -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-neon-cyan to-neon-purple flex items-center justify-center animate-spin-slow">
+                                    <i class="fas fa-globe text-4xl text-white"></i>
+                                </div>
+                                <h3 class="font-orbitron font-bold text-2xl mb-4 neon-text">Entering Virtual Space...</h3>
+                                <div class="dna-loader mx-auto"></div>
+                            </div>
+                        </div>
+
+                        <!-- Floating Company Booths -->
+                        <div class="absolute top-10 left-10 card-3d floating">
+                            <div class="glass-card p-4 w-32 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-r from-neon-blue to-neon-cyan flex items-center justify-center">
+                                        <i class="fab fa-google text-white"></i>
+                                    </div>
+                                    <div class="text-xs font-semibold" data-mock="true">Google</div>
+                                    <div class="flex items-center justify-center mt-1">
+                                        <div class="w-2 h-2 bg-neon-green rounded-full animate-pulse mr-1"></div>
+                                        <span class="text-xs text-neon-green" data-mock="true">5 live</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="absolute top-20 right-20 card-3d floating" style="animation-delay: -2s;">
+                            <div class="glass-card p-4 w-32 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center">
+                                        <i class="fab fa-microsoft text-white"></i>
+                                    </div>
+                                    <div class="text-xs font-semibold" data-mock="true">Microsoft</div>
+                                    <div class="flex items-center justify-center mt-1">
+                                        <div class="w-2 h-2 bg-neon-cyan rounded-full animate-pulse mr-1"></div>
+                                        <span class="text-xs text-neon-cyan" data-mock="true">8 live</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="absolute bottom-20 left-1/4 card-3d floating" style="animation-delay: -4s;">
+                            <div class="glass-card p-4 w-32 hover:scale-110 transition-transform duration-300 cursor-pointer">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 mx-auto mb-2 rounded-lg bg-gradient-to-r from-neon-green to-neon-cyan flex items-center justify-center">
+                                        <i class="fab fa-amazon text-black"></i>
+                                    </div>
+                                    <div class="text-xs font-semibold" data-mock="true">Amazon</div>
+                                    <div class="flex items-center justify-center mt-1">
+                                        <div class="w-2 h-2 bg-neon-purple rounded-full animate-pulse mr-1"></div>
+                                        <span class="text-xs text-neon-purple" data-mock="true">12 live</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- VR/AR Entry Point -->
+                        <div class="absolute bottom-4 right-4">
+                            <button class="glass-card p-3 hover:bg-white/10 transition-all duration-300 group">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-vr-cardboard text-neon-pink group-hover:animate-pulse"></i>
+                                    <span class="text-sm font-semibold" data-mock="true">Enter VR Mode</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fair Controls -->
+                    <div class="flex items-center justify-center space-x-4 mt-6">
+                        <button class="cyber-btn" data-event="click:joinFair">
+                            <i class="fas fa-door-open mr-2"></i>Enter Fair
+                        </button>
+                        <button class="cyber-btn" data-event="click:scheduleVisit">
+                            <i class="fas fa-calendar mr-2"></i>Schedule Visit
+                        </button>
+                        <button class="cyber-btn" data-event="click:viewMap">
+                            <i class="fas fa-map mr-2"></i>Fair Map
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Companies & Stats -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Live Companies -->
+                    <div class="lg:col-span-2 glass-card neon-border p-6 hover-lift">
+                        <h3 class="font-orbitron font-bold text-xl mb-6 neon-text">🏢 Live Company Booths</h3>
+                        <!-- @MAP: liveCompanies.map(company => ( -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="glass-card p-4 border border-border/20 hover:border-neon-cyan/30 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-16 h-16 rounded-xl bg-gradient-to-r from-neon-cyan to-neon-blue flex items-center justify-center">
+                                        <i class="fab fa-google text-white text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-lg" data-mock="true">Google</h4>
+                                        <p class="text-sm text-muted-foreground" data-mock="true">Software Engineering • Cloud • AI</p>
+                                        <div class="flex items-center mt-2">
+                                            <div class="w-2 h-2 bg-neon-green rounded-full animate-pulse mr-2"></div>
+                                            <span class="text-sm text-neon-green" data-bind="company.google.attendees">5 recruiters online</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex space-x-2">
+                                    <button class="cyber-btn text-xs flex-1" data-event="click:visitBooth">Visit Booth</button>
+                                    <button class="cyber-btn text-xs flex-1" data-event="click:chatRecruiter">Chat Live</button>
+                                </div>
+                            </div>
+
+                            <div class="glass-card p-4 border border-border/20 hover:border-neon-purple/30 transition-all duration-300">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-16 h-16 rounded-xl bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center">
+                                        <i class="fab fa-microsoft text-white text-xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-lg" data-mock="true">Microsoft</h4>
+                                        <p class="text-sm text-muted-foreground" data-mock="true">Full Stack • Azure • DevOps</p>
+                                        <div class="flex items-center mt-2">
+                                            <div class="w-2 h-2 bg-neon-cyan rounded-full animate-pulse mr-2"></div>
+                                            <span class="text-sm text-neon-cyan" data-bind="company.microsoft.attendees">8 recruiters online</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex space-x-2">
+                                    <button class="cyber-btn text-xs flex-1" data-event="click:visitBooth">Visit Booth</button>
+                                    <button class="cyber-btn text-xs flex-1" data-event="click:chatRecruiter">Chat Live</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+
+                    <!-- Fair Statistics -->
+                    <div class="space-y-6">
+                        <!-- Live Stats -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">📊 Live Stats</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between">
+                                    <span data-mock="true">Students Online</span>
+                                    <span class="neon-text font-semibold" data-bind="fair.studentsOnline">1,247</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span data-mock="true">Companies Live</span>
+                                    <span class="neon-text font-semibold" data-bind="fair.companiesLive">23</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span data-mock="true">Active Chats</span>
+                                    <span class="neon-text font-semibold" data-bind="fair.activeChats">156</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span data-mock="true">Interviews Scheduled</span>
+                                    <span class="neon-text font-semibold" data-bind="fair.interviewsScheduled">42</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Your Activity -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">👤 Your Activity</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-check-circle text-neon-green"></i>
+                                    <span class="text-sm" data-mock="true">Visited 3 booths</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-comments text-neon-cyan"></i>
+                                    <span class="text-sm" data-mock="true">2 active chats</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-calendar text-neon-purple"></i>
+                                    <span class="text-sm" data-mock="true">1 interview scheduled</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-download text-neon-pink"></i>
+                                    <span class="text-sm" data-mock="true">Downloaded 5 resources</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Networking Hub -->
+                        <div class="glass-card neon-border p-6 hover-lift">
+                            <h3 class="font-orbitron font-bold text-lg mb-4 neon-text">🤝 Networking Hub</h3>
+                            <div class="space-y-3">
+                                <button class="w-full cyber-btn text-sm" data-event="click:findAlumni">
+                                    <i class="fas fa-user-graduate mr-2"></i>Find Alumni
+                                </button>
+                                <button class="w-full cyber-btn text-sm" data-event="click:joinGroupChat">
+                                    <i class="fas fa-users mr-2"></i>Join Group Chat
+                                </button>
+                                <button class="w-full cyber-btn text-sm" data-event="click:attendWorkshop">
+                                    <i class="fas fa-chalkboard-teacher mr-2"></i>Live Workshop
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: VirtualJobFair -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-card border-t border-border/20 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h3 class="font-orbitron font-bold text-xl neon-text mb-4">PlaceNet</h3>
+                <p class="text-muted-foreground mb-4">Powered by AI • Built for the Future</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="#" class="text-muted-foreground hover:text-neon-cyan transition-colors">Privacy</a>
+                    <a href="#" class="text-muted-foreground hover:text-neon-cyan transition-colors">Terms</a>
+                    <a href="#" class="text-muted-foreground hover:text-neon-cyan transition-colors">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // TODO: Implement business logic, API calls, or state management
+        
+        // Particle System
+        (function() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                container.appendChild(particle);
+            }
+        })();
+
+        // Magnetic Hover Effect
+        (function() {
+            const magneticElements = document.querySelectorAll('.magnetic');
+            
+            magneticElements.forEach(element => {
+                element.addEventListener('mousemove', (e) => {
+                    const rect = element.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const deltaX = (e.clientX - centerX) * 0.1;
+                    const deltaY = (e.clientY - centerY) * 0.1;
+                    
+                    element.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+                });
+
+                element.addEventListener('mouseleave', () => {
+                    element.style.transform = 'translate(0, 0)';
+                });
+            });
+        })();
+
+        // Glass Card Hover Effects
+        (function() {
+            const glassCards = document.querySelectorAll('.glass-card');
+            
+            glassCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        })();
+
+        // Smooth scrolling for navigation
+        (function() {
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        })();
+
+        // Progress ring animation
+        (function() {
+            const progressRings = document.querySelectorAll('.progress-ring-circle');
+            
+            progressRings.forEach(ring => {
+                const radius = ring.r.baseVal.value;
+                const circumference = radius * 2 * Math.PI;
+                const progress = 85; // Example progress value
+                const offset = circumference - (progress / 100) * circumference;
+                
+                ring.style.strokeDasharray = `${circumference} ${circumference}`;
+                ring.style.strokeDashoffset = offset;
+            });
+        })();
+
+        // Intersection Observer for animations
+        (function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll('.glass-card, .floating');
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(element);
+            });
+        })();
+
+        // Dynamic background animation
+        (function() {
+            const bg = document.querySelector('.cyberpunk-bg');
+            let mouseX = 0;
+            let mouseY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX / window.innerWidth;
+                mouseY = e.clientY / window.innerHeight;
+                
+                bg.style.backgroundPosition = `${mouseX * 20}px ${mouseY * 20}px`;
+            });
+        })();
+
+        // Simulate real-time updates
+        (function() {
+            const updateElements = [
+                { selector: '[data-bind="user.name"]', values: ['Alex', 'Priya', 'Rahul', 'Sneha'] },
+                { selector: '[data-bind="jobMatches.count"]', values: [12, 15, 8, 20] },
+                { selector: '[data-bind="streak.days"]', values: [15, 16, 17, 18] }
+            ];
+
+            setInterval(() => {
+                updateElements.forEach(({ selector, values }) => {
+                    const elements = document.querySelectorAll(selector);
+                    const randomValue = values[Math.floor(Math.random() * values.length)];
+                    elements.forEach(el => {
+                        if (el.textContent !== randomValue.toString()) {
+                            el.style.transition = 'color 0.3s ease';
+                            el.style.color = '#00FFFF';
+                            setTimeout(() => {
+                                el.style.color = '';
+                            }, 300);
+                        }
+                    });
+                });
+            }, 5000);
+        })();
+    </script>
+</body>
+</html>

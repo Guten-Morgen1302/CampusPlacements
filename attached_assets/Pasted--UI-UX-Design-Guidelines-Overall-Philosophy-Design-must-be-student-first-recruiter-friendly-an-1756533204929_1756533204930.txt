@@ -1,0 +1,57 @@
+🎨 UI/UX Design Guidelines
+
+Overall Philosophy
+
+Design must be student-first, recruiter-friendly, and admin-efficient.
+
+Blend the professionalism of LinkedIn, the intuitiveness of Notion, and the engagement of Duolingo.
+
+Prioritize mobile-first responsive design with seamless scaling across all devices.
+
+Core Principles
+
+Minimal & Modern Aesthetic: Clean white/neutral backgrounds with vibrant accent gradients (blue/purple/teal).
+
+Consistent Design System: Material 3 / Tailwind-inspired components for buttons, forms, cards, and typography.
+
+Clarity & Accessibility: High contrast text, large readable fonts, alt-text for images, and keyboard navigation.
+
+Micro-interactions: Smooth hover states, progress animations, confetti for achievements, real-time chat indicators.
+
+Student-Side UI
+
+Dashboard: Personalized greeting + card-based modules (Resume Score, Job Matches, Upcoming Interviews, Progress Tracker).
+
+Resume Scanner: Drag-and-drop upload → instant score dial (0–100) with visual suggestions below.
+
+Interview Room: Split view with AI interviewer (left) and student answer (right). Feedback meter (confidence %, clarity, correctness).
+
+Virtual Job Fair: Recruiter booths as clickable cards with live/active indicators.
+
+Gamification: Leaderboards styled like gaming ranks, badge collection area, streak flames.
+
+Recruiter-Side UI
+
+Dashboard: Kanban board for applicants (Applied → Shortlisted → Interviewing → Hired).
+
+Candidate Search: Tag/chip-based search bar for filtering by skills, CGPA, achievements.
+
+Analytics: Heatmaps + interactive charts → export option.
+
+Admin-Side UI
+
+Analytics Cockpit: Placement readiness heatmap by department/year.
+
+Event Manager: Calendar UI with drag-and-drop drives & auto notifications.
+
+Content Management: Notion-style editor for training resources & announcements.
+
+Hackathon WOW UI
+
+Dark Mode Toggle with smooth transitions.
+
+Community Forum: Discord-style channel layout for mentorship, alumni, and peer chat.
+
+Notification Center: Bell icon with contextual reminders (drive deadlines, interview slots, job matches).
+
+Future-Ready Mockups: AR/VR job fair entry card for “3D booths.”

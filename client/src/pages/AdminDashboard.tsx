@@ -535,12 +535,15 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-cyan-500/10 border-cyan-500/20">
                       <h3 className="font-semibold text-cyan-300 mb-2">Role Management</h3>
                       <p className="text-sm text-muted-foreground mb-3">Create/edit/delete users, change roles</p>
+                      <Button 
+                        size="sm" 
+                        className="w-full neon-button" 
+                        onClick={() => setUserModalOpen(true)}
+                        data-testid="button-manage-roles"
+                      >
+                        Manage Roles
+                      </Button>
                       <Dialog open={userModalOpen} onOpenChange={setUserModalOpen}>
-                        <DialogTrigger asChild>
-                          <Button size="sm" className="w-full" data-testid="button-manage-roles">
-                            Manage Roles
-                          </Button>
-                        </DialogTrigger>
                         <DialogContent className="glass-card max-w-md">
                           <DialogHeader>
                             <DialogTitle className="neon-text">User Role Management</DialogTitle>
@@ -595,12 +598,15 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-purple-500/10 border-purple-500/20">
                       <h3 className="font-semibold text-purple-300 mb-2">Bulk Operations</h3>
                       <p className="text-sm text-muted-foreground mb-3">Import students from CSV, mass changes</p>
+                      <Button 
+                        size="sm" 
+                        className="w-full neon-button" 
+                        onClick={() => setBulkModalOpen(true)}
+                        data-testid="button-bulk-operations"
+                      >
+                        Bulk Actions
+                      </Button>
                       <Dialog open={bulkModalOpen} onOpenChange={setBulkModalOpen}>
-                        <DialogTrigger asChild>
-                          <Button size="sm" className="w-full" data-testid="button-bulk-operations">
-                            Bulk Actions
-                          </Button>
-                        </DialogTrigger>
                         <DialogContent className="glass-card max-w-lg">
                           <DialogHeader>
                             <DialogTitle className="neon-text">Bulk Operations</DialogTitle>
@@ -686,12 +692,15 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-orange-500/10 border-orange-500/20">
                       <h3 className="font-semibold text-orange-300 mb-2">Activity Monitoring</h3>
                       <p className="text-sm text-muted-foreground mb-3">Track login patterns, inactive accounts</p>
+                      <Button 
+                        size="sm" 
+                        className="w-full neon-button" 
+                        onClick={() => setActivityModalOpen(true)}
+                        data-testid="button-activity-monitor"
+                      >
+                        View Activity
+                      </Button>
                       <Dialog open={activityModalOpen} onOpenChange={setActivityModalOpen}>
-                        <DialogTrigger asChild>
-                          <Button size="sm" className="w-full" data-testid="button-activity-monitor">
-                            View Activity
-                          </Button>
-                        </DialogTrigger>
                         <DialogContent className="glass-card max-w-2xl">
                           <DialogHeader>
                             <DialogTitle className="neon-text">User Activity Monitor</DialogTitle>
@@ -764,12 +773,15 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-green-500/10 border-green-500/20">
                       <h3 className="font-semibold text-green-300 mb-2">Account Verification</h3>
                       <p className="text-sm text-muted-foreground mb-3">Approve/reject recruiter registrations</p>
+                      <Button 
+                        size="sm" 
+                        className="w-full neon-button" 
+                        onClick={() => setVerificationModalOpen(true)}
+                        data-testid="button-verify-accounts"
+                      >
+                        Verify Accounts
+                      </Button>
                       <Dialog open={verificationModalOpen} onOpenChange={setVerificationModalOpen}>
-                        <DialogTrigger asChild>
-                          <Button size="sm" className="w-full" data-testid="button-verify-accounts">
-                            Verify Accounts
-                          </Button>
-                        </DialogTrigger>
                         <DialogContent className="glass-card max-w-2xl">
                           <DialogHeader>
                             <DialogTitle className="neon-text">Account Verification</DialogTitle>

@@ -106,7 +106,7 @@ export default function RecruiterDashboard({ user }: RecruiterDashboardProps) {
     refetchOnWindowFocus: true,
   });
 
-  // Delete job mutation
+  // Delete job mutation with optimistic updates
   const deleteJobMutation = useMutation({
     mutationFn: async (jobId: string) => {
       const response = await fetch(`/api/jobs/${jobId}`, {
@@ -114,27 +114,51 @@ export default function RecruiterDashboard({ user }: RecruiterDashboardProps) {
         credentials: 'include'
       });
       if (!response.ok) {
+        if (response.status === 404) {
+          // Job already deleted, treat as success
+          return { message: "Job already deleted" };
+        }
         throw new Error('Failed to delete job');
       }
       return response.json();
     },
-    onSuccess: async () => {
-      console.log('Delete mutation succeeded, invalidating cache...');
-      await queryClient.invalidateQueries({ queryKey: ['/api/recruiter/jobs'] });
-      await queryClient.invalidateQueries({ queryKey: ['/api/jobs'] });
-      await queryClient.refetchQueries({ queryKey: ['/api/recruiter/jobs'] });
-      console.log('Cache invalidated and refetched');
-      toast({
-        title: "Job Deleted",
-        description: "Job posting has been successfully deleted.",
+    onMutate: async (jobId) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/recruiter/jobs'] });
+      
+      // Snapshot the previous value
+      const previousJobs = queryClient.getQueryData(['/api/recruiter/jobs']);
+      
+      // Optimistically update to remove the job
+      queryClient.setQueryData(['/api/recruiter/jobs'], (old: Job[] | undefined) => {
+        return old ? old.filter(job => job.id !== jobId) : [];
       });
+      
+      // Return a context object with the snapshotted value
+      return { previousJobs };
     },
-    onError: (error) => {
+    onError: (err, jobId, context) => {
+      // If the mutation fails, use the context to roll back
+      if (context?.previousJobs) {
+        queryClient.setQueryData(['/api/recruiter/jobs'], context.previousJobs);
+      }
       toast({
         title: "Error",
         description: "Failed to delete job posting.",
         variant: "destructive",
       });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Job Deleted",
+        description: "Job posting has been successfully deleted.",
+      });
+      // Invalidate to make sure we're in sync with server
+      queryClient.invalidateQueries({ queryKey: ['/api/jobs'] });
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ['/api/recruiter/jobs'] });
     }
   });
 

@@ -30,11 +30,36 @@ export default function AdminDashboard() {
   
   // User Management State
   const [userModalOpen, setUserModalOpen] = useState(false);
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
+  const [activityModalOpen, setActivityModalOpen] = useState(false);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState("all");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [editingUser, setEditingUser] = useState({ email: "", newRole: "" });
+  const [bulkEmails, setBulkEmails] = useState("");
+  const [bulkAction, setBulkAction] = useState("role_change");
+  const [csvFile, setCsvFile] = useState(null);
+  
   const [users, setUsers] = useState([
-    { id: "1", name: "John Doe", email: "john@example.com", role: "student", status: "active", lastLogin: "2025-01-01" },
-    { id: "2", name: "Jane Smith", email: "jane@company.com", role: "recruiter", status: "pending", lastLogin: "2025-01-02" },
-    { id: "3", name: "Admin User", email: "admin@placenet.com", role: "admin", status: "active", lastLogin: "2025-01-03" }
+    { id: "1", name: "John Doe", email: "john@example.com", role: "student", status: "active", lastLogin: "2025-01-01T10:30:00", createdAt: "2024-09-01" },
+    { id: "2", name: "Jane Smith", email: "jane@company.com", role: "recruiter", status: "pending", lastLogin: "2025-01-02T14:20:00", createdAt: "2024-12-15" },
+    { id: "3", name: "Admin User", email: "admin@placenet.com", role: "admin", status: "active", lastLogin: "2025-01-03T09:15:00", createdAt: "2024-08-01" },
+    { id: "4", name: "Mike Johnson", email: "mike@techcorp.com", role: "recruiter", status: "pending", lastLogin: "Never", createdAt: "2025-01-01" },
+    { id: "5", name: "Sarah Wilson", email: "sarah@student.edu", role: "student", status: "active", lastLogin: "2024-12-28T16:45:00", createdAt: "2024-08-15" }
+  ]);
+  
+  const [pendingRecruiters, setPendingRecruiters] = useState([
+    { id: "r1", name: "Tech Corp Recruiter", email: "recruiter1@techcorp.com", company: "TechCorp Inc.", appliedDate: "2025-01-01", documents: ["company_verification.pdf", "recruiter_license.pdf"] },
+    { id: "r2", name: "Finance Pro Recruiter", email: "recruiter2@finpro.com", company: "FinancePro Ltd.", appliedDate: "2025-01-02", documents: ["business_license.pdf"] },
+    { id: "r3", name: "StartUp HR Manager", email: "hr@startup.io", company: "StartUp Solutions", appliedDate: "2025-01-03", documents: ["startup_registration.pdf", "hr_certification.pdf"] }
+  ]);
+  
+  const [userActivity, setUserActivity] = useState([
+    { id: "1", email: "john@example.com", action: "Login", timestamp: "2025-01-03T16:30:00", ip: "192.168.1.1", device: "Chrome/Mac" },
+    { id: "2", email: "jane@company.com", action: "Profile Update", timestamp: "2025-01-03T15:20:00", ip: "10.0.0.1", device: "Firefox/Windows" },
+    { id: "3", email: "admin@placenet.com", action: "User Role Changed", timestamp: "2025-01-03T14:15:00", ip: "172.16.0.1", device: "Chrome/Linux" },
+    { id: "4", email: "sarah@student.edu", action: "Failed Login", timestamp: "2025-01-03T13:45:00", ip: "203.0.113.1", device: "Safari/iOS" },
+    { id: "5", email: "mike@techcorp.com", action: "Registration", timestamp: "2025-01-01T10:00:00", ip: "198.51.100.1", device: "Edge/Windows" }
   ]);
   
   // Analytics State
@@ -102,6 +127,158 @@ export default function AdminDashboard() {
       }
     }
   }, [isAuthenticated, isLoading, user, toast]);
+  
+  // User Management Functions
+  const handleRoleUpdate = () => {
+    if (!editingUser.email || !editingUser.newRole) {
+      toast({ title: "Error", description: "Please fill all fields", variant: "destructive" });
+      return;
+    }
+    
+    setUsers(users.map(u => 
+      u.email === editingUser.email 
+        ? { ...u, role: editingUser.newRole }
+        : u
+    ));
+    
+    // Add to activity log
+    setUserActivity([{
+      id: Date.now().toString(),
+      email: editingUser.email,
+      action: `Role changed to ${editingUser.newRole}`,
+      timestamp: new Date().toISOString(),
+      ip: "Admin Panel",
+      device: "Admin"
+    }, ...userActivity]);
+    
+    toast({ title: "Success", description: `User role updated to ${editingUser.newRole}` });
+    setEditingUser({ email: "", newRole: "" });
+    setUserModalOpen(false);
+  };
+  
+  const handleDeleteUser = (userEmail) => {
+    setUsers(users.filter(u => u.email !== userEmail));
+    setUserActivity([{
+      id: Date.now().toString(),
+      email: userEmail,
+      action: "User deleted",
+      timestamp: new Date().toISOString(),
+      ip: "Admin Panel",
+      device: "Admin"
+    }, ...userActivity]);
+    toast({ title: "Success", description: "User deleted successfully" });
+  };
+  
+  const handleBulkOperation = () => {
+    if (!bulkEmails.trim()) {
+      toast({ title: "Error", description: "Please enter user emails", variant: "destructive" });
+      return;
+    }
+    
+    const emails = bulkEmails.split(',').map(e => e.trim()).filter(e => e);
+    let successCount = 0;
+    
+    if (bulkAction === "role_change") {
+      setUsers(users.map(u => {
+        if (emails.includes(u.email)) {
+          successCount++;
+          return { ...u, role: "student" }; // Default bulk role change
+        }
+        return u;
+      }));
+      toast({ title: "Success", description: `Updated roles for ${successCount} users` });
+    } else if (bulkAction === "send_email") {
+      // Simulate email sending
+      successCount = emails.length;
+      toast({ title: "Success", description: `Sent emails to ${successCount} users` });
+    }
+    
+    setBulkEmails("");
+    setBulkModalOpen(false);
+  };
+  
+  const handleCSVImport = () => {
+    if (!csvFile) {
+      toast({ title: "Error", description: "Please select a CSV file", variant: "destructive" });
+      return;
+    }
+    
+    // Simulate CSV processing
+    const newUsers = [
+      { id: Date.now().toString(), name: "CSV User 1", email: "csv1@example.com", role: "student", status: "active", lastLogin: "Never", createdAt: new Date().toISOString().split('T')[0] },
+      { id: (Date.now() + 1).toString(), name: "CSV User 2", email: "csv2@example.com", role: "student", status: "active", lastLogin: "Never", createdAt: new Date().toISOString().split('T')[0] }
+    ];
+    
+    setUsers([...users, ...newUsers]);
+    toast({ title: "Success", description: `Imported ${newUsers.length} users from CSV` });
+    setCsvFile(null);
+  };
+  
+  const handleApproveRecruiter = (recruiterId) => {
+    const recruiter = pendingRecruiters.find(r => r.id === recruiterId);
+    if (recruiter) {
+      // Add to users list
+      const newUser = {
+        id: Date.now().toString(),
+        name: recruiter.name,
+        email: recruiter.email,
+        role: "recruiter",
+        status: "active",
+        lastLogin: "Never",
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+      
+      setUsers([...users, newUser]);
+      setPendingRecruiters(pendingRecruiters.filter(r => r.id !== recruiterId));
+      
+      setUserActivity([{
+        id: Date.now().toString(),
+        email: recruiter.email,
+        action: "Recruiter application approved",
+        timestamp: new Date().toISOString(),
+        ip: "Admin Panel",
+        device: "Admin"
+      }, ...userActivity]);
+      
+      toast({ title: "Success", description: `Approved ${recruiter.name} as recruiter` });
+    }
+  };
+  
+  const handleRejectRecruiter = (recruiterId) => {
+    const recruiter = pendingRecruiters.find(r => r.id === recruiterId);
+    if (recruiter) {
+      setPendingRecruiters(pendingRecruiters.filter(r => r.id !== recruiterId));
+      
+      setUserActivity([{
+        id: Date.now().toString(),
+        email: recruiter.email,
+        action: "Recruiter application rejected",
+        timestamp: new Date().toISOString(),
+        ip: "Admin Panel",
+        device: "Admin"
+      }, ...userActivity]);
+      
+      toast({ title: "Rejected", description: `Rejected ${recruiter.name}'s application`, variant: "destructive" });
+    }
+  };
+  
+  const getActivityStats = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    return {
+      activeToday: users.filter(u => u.lastLogin !== "Never" && new Date(u.lastLogin) >= today).length,
+      inactive7Days: users.filter(u => u.lastLogin !== "Never" && new Date(u.lastLogin) < sevenDaysAgo).length,
+      neverLoggedIn: users.filter(u => u.lastLogin === "Never").length
+    };
+  };
+  
+  const filteredUsers = users
+    .filter(user => selectedRole === "all" || user.role === selectedRole)
+    .filter(user => user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase()));
+  
+  const activityStats = getActivityStats();
 
   if (isLoading) {
     return (
@@ -300,10 +477,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {users
-                            .filter(user => selectedRole === "all" || user.role === selectedRole)
-                            .filter(user => user.name.toLowerCase().includes(searchTerm.toLowerCase()) || user.email.toLowerCase().includes(searchTerm.toLowerCase()))
-                            .map(user => (
+                          {filteredUsers.map(user => (
                             <TableRow key={user.id}>
                               <TableCell className="font-medium">{user.name}</TableCell>
                               <TableCell>{user.email}</TableCell>
@@ -324,10 +498,27 @@ export default function AdminDashboard() {
                               <TableCell>{user.lastLogin}</TableCell>
                               <TableCell>
                                 <div className="flex gap-2">
-                                  <Button size="sm" variant="outline" data-testid={`button-edit-user-${user.id}`}>
+                                      <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    onClick={() => {
+                                      setEditingUser({ email: user.email, newRole: user.role });
+                                      setUserModalOpen(true);
+                                    }}
+                                    data-testid={`button-edit-user-${user.id}`}
+                                  >
                                     <Edit className="h-3 w-3" />
                                   </Button>
-                                  <Button size="sm" variant="outline" data-testid={`button-delete-user-${user.id}`}>
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline" 
+                                    onClick={() => {
+                                      if (confirm(`Delete user ${user.name}?`)) {
+                                        handleDeleteUser(user.email);
+                                      }
+                                    }}
+                                    data-testid={`button-delete-user-${user.id}`}
+                                  >
                                     <Trash2 className="h-3 w-3" />
                                   </Button>
                                 </div>
@@ -357,11 +548,16 @@ export default function AdminDashboard() {
                           <div className="space-y-4">
                             <div>
                               <Label>User Email</Label>
-                              <Input placeholder="user@example.com" className="glass-input" />
+                              <Input 
+                                placeholder="user@example.com" 
+                                className="glass-input" 
+                                value={editingUser.email}
+                                onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                              />
                             </div>
                             <div>
                               <Label>New Role</Label>
-                              <Select>
+                              <Select value={editingUser.newRole} onValueChange={(value) => setEditingUser({...editingUser, newRole: value})}>
                                 <SelectTrigger className="glass-input">
                                   <SelectValue placeholder="Select role" />
                                 </SelectTrigger>
@@ -373,11 +569,20 @@ export default function AdminDashboard() {
                               </Select>
                             </div>
                             <div className="flex gap-2">
-                              <Button className="flex-1 neon-button">
+                              <Button className="flex-1 neon-button" onClick={handleRoleUpdate}>
                                 <Save className="h-4 w-4 mr-2" />
                                 Update Role
                               </Button>
-                              <Button variant="outline" className="flex-1">
+                              <Button 
+                                variant="outline" 
+                                className="flex-1"
+                                onClick={() => {
+                                  if (editingUser.email && confirm(`Delete user ${editingUser.email}?`)) {
+                                    handleDeleteUser(editingUser.email);
+                                    setUserModalOpen(false);
+                                  }
+                                }}
+                              >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Delete User
                               </Button>
@@ -390,7 +595,7 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-purple-500/10 border-purple-500/20">
                       <h3 className="font-semibold text-purple-300 mb-2">Bulk Operations</h3>
                       <p className="text-sm text-muted-foreground mb-3">Import students from CSV, mass changes</p>
-                      <Dialog>
+                      <Dialog open={bulkModalOpen} onOpenChange={setBulkModalOpen}>
                         <DialogTrigger asChild>
                           <Button size="sm" className="w-full" data-testid="button-bulk-operations">
                             Bulk Actions
@@ -401,33 +606,78 @@ export default function AdminDashboard() {
                             <DialogTitle className="neon-text">Bulk Operations</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <Button className="w-full neon-button">
-                                <UserPlus className="h-4 w-4 mr-2" />
-                                Bulk Add Users
-                              </Button>
-                              <Button className="w-full" variant="outline">
-                                <Edit className="h-4 w-4 mr-2" />
-                                Mass Role Change
-                              </Button>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                              <Button className="w-full" variant="outline">
-                                <Mail className="h-4 w-4 mr-2" />
-                                Send Bulk Email
-                              </Button>
-                              <Button className="w-full" variant="outline">
-                                <Download className="h-4 w-4 mr-2" />
-                                Export Users
-                              </Button>
-                            </div>
                             <div>
-                              <Label>Select Users</Label>
-                              <Textarea placeholder="Enter user emails separated by commas..." className="glass-input" rows={4} />
+                              <Label>Action Type</Label>
+                              <Select value={bulkAction} onValueChange={setBulkAction}>
+                                <SelectTrigger className="glass-input">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="role_change">Mass Role Change</SelectItem>
+                                  <SelectItem value="send_email">Send Bulk Email</SelectItem>
+                                  <SelectItem value="export">Export Users</SelectItem>
+                                  <SelectItem value="csv_import">CSV Import</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
-                            <Button className="w-full neon-button">
-                              Execute Bulk Action
-                            </Button>
+                            
+                            {bulkAction === "csv_import" ? (
+                              <div>
+                                <Label>Upload CSV File</Label>
+                                <Input 
+                                  type="file" 
+                                  accept=".csv" 
+                                  className="glass-input" 
+                                  onChange={(e) => setCsvFile(e.target.files[0])}
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Format: email,firstName,lastName,role
+                                </p>
+                                <Button className="w-full neon-button mt-2" onClick={handleCSVImport}>
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  Import Users
+                                </Button>
+                              </div>
+                            ) : bulkAction === "export" ? (
+                              <div>
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  Export all users to CSV file
+                                </p>
+                                <Button className="w-full neon-button" onClick={() => {
+                                  // Simulate CSV export
+                                  const csvData = users.map(u => `${u.email},${u.name},${u.role},${u.status}`).join('\n');
+                                  const blob = new Blob([`email,name,role,status\n${csvData}`], { type: 'text/csv' });
+                                  const url = URL.createObjectURL(blob);
+                                  const a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = 'users_export.csv';
+                                  a.click();
+                                  toast({ title: "Success", description: "Users exported to CSV" });
+                                  setBulkModalOpen(false);
+                                }}>
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Export to CSV
+                                </Button>
+                              </div>
+                            ) : (
+                              <>
+                                <div>
+                                  <Label>Target Users (emails separated by commas)</Label>
+                                  <Textarea 
+                                    placeholder="user1@example.com, user2@example.com..." 
+                                    className="glass-input" 
+                                    rows={4}
+                                    value={bulkEmails}
+                                    onChange={(e) => setBulkEmails(e.target.value)}
+                                  />
+                                </div>
+                                <Button className="w-full neon-button" onClick={handleBulkOperation}>
+                                  {bulkAction === "role_change" && <Edit className="h-4 w-4 mr-2" />}
+                                  {bulkAction === "send_email" && <Mail className="h-4 w-4 mr-2" />}
+                                  Execute {bulkAction === "role_change" ? "Role Change" : "Email Send"}
+                                </Button>
+                              </>
+                            )}
                           </div>
                         </DialogContent>
                       </Dialog>
@@ -436,7 +686,7 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-orange-500/10 border-orange-500/20">
                       <h3 className="font-semibold text-orange-300 mb-2">Activity Monitoring</h3>
                       <p className="text-sm text-muted-foreground mb-3">Track login patterns, inactive accounts</p>
-                      <Dialog>
+                      <Dialog open={activityModalOpen} onOpenChange={setActivityModalOpen}>
                         <DialogTrigger asChild>
                           <Button size="sm" className="w-full" data-testid="button-activity-monitor">
                             View Activity
@@ -450,28 +700,61 @@ export default function AdminDashboard() {
                             <div className="grid grid-cols-3 gap-4">
                               <Card className="p-3 text-center">
                                 <p className="text-sm text-muted-foreground">Active Today</p>
-                                <p className="text-2xl font-bold text-green-400">247</p>
+                                <p className="text-2xl font-bold text-green-400">{activityStats.activeToday}</p>
                               </Card>
                               <Card className="p-3 text-center">
                                 <p className="text-sm text-muted-foreground">Inactive 7+ Days</p>
-                                <p className="text-2xl font-bold text-yellow-400">89</p>
+                                <p className="text-2xl font-bold text-yellow-400">{activityStats.inactive7Days}</p>
                               </Card>
                               <Card className="p-3 text-center">
                                 <p className="text-sm text-muted-foreground">Never Logged In</p>
-                                <p className="text-2xl font-bold text-red-400">23</p>
+                                <p className="text-2xl font-bold text-red-400">{activityStats.neverLoggedIn}</p>
                               </Card>
                             </div>
                             <div>
-                              <h4 className="font-semibold mb-2">Recent Login Activity</h4>
+                              <h4 className="font-semibold mb-2">Recent User Activity</h4>
                               <div className="space-y-2 max-h-48 overflow-y-auto">
-                                {[...Array(8)].map((_, i) => (
-                                  <div key={i} className="flex justify-between items-center p-2 rounded bg-background/20">
-                                    <span className="text-sm">user{i+1}@example.com</span>
-                                    <span className="text-sm text-muted-foreground">{i+1} hours ago</span>
-                                    <Badge className="bg-green-500/20 text-green-400 text-xs">Active</Badge>
+                                {userActivity.slice(0, 10).map((activity) => (
+                                  <div key={activity.id} className="flex justify-between items-center p-2 rounded bg-background/20">
+                                    <div className="flex-1">
+                                      <span className="text-sm font-medium">{activity.email}</span>
+                                      <p className="text-xs text-muted-foreground">{activity.action} • {activity.device}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <span className="text-xs text-muted-foreground">
+                                        {new Date(activity.timestamp).toLocaleString()}
+                                      </span>
+                                      <Badge className={`
+                                        ${activity.action.includes('Failed') ? 'bg-red-500/20 text-red-400' : 
+                                          activity.action.includes('Login') ? 'bg-green-500/20 text-green-400' :
+                                          'bg-blue-500/20 text-blue-400'} text-xs mt-1
+                                      `}>
+                                        {activity.action.includes('Failed') ? 'Alert' : 'Success'}
+                                      </Badge>
+                                    </div>
                                   </div>
                                 ))}
                               </div>
+                            </div>
+                            <div className="mt-4">
+                              <Button 
+                                className="w-full" 
+                                variant="outline"
+                                onClick={() => {
+                                  // Export activity logs
+                                  const csvData = userActivity.map(a => `${a.email},${a.action},${a.timestamp},${a.ip},${a.device}`).join('\n');
+                                  const blob = new Blob([`email,action,timestamp,ip,device\n${csvData}`], { type: 'text/csv' });
+                                  const url = URL.createObjectURL(blob);
+                                  const elem = document.createElement('a');
+                                  elem.href = url;
+                                  elem.download = 'activity_logs.csv';
+                                  elem.click();
+                                  toast({ title: "Success", description: "Activity logs exported" });
+                                }}
+                              >
+                                <Download className="h-4 w-4 mr-2" />
+                                Export Activity Logs
+                              </Button>
                             </div>
                           </div>
                         </DialogContent>
@@ -481,7 +764,7 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-green-500/10 border-green-500/20">
                       <h3 className="font-semibold text-green-300 mb-2">Account Verification</h3>
                       <p className="text-sm text-muted-foreground mb-3">Approve/reject recruiter registrations</p>
-                      <Dialog>
+                      <Dialog open={verificationModalOpen} onOpenChange={setVerificationModalOpen}>
                         <DialogTrigger asChild>
                           <Button size="sm" className="w-full" data-testid="button-verify-accounts">
                             Verify Accounts
@@ -493,34 +776,61 @@ export default function AdminDashboard() {
                           </DialogHeader>
                           <div className="space-y-4">
                             <div className="flex gap-4 mb-4">
-                              <Badge className="bg-yellow-500/20 text-yellow-400">3 Pending</Badge>
+                              <Badge className="bg-yellow-500/20 text-yellow-400">{pendingRecruiters.length} Pending</Badge>
                               <Badge className="bg-green-500/20 text-green-400">12 Approved Today</Badge>
                               <Badge className="bg-red-500/20 text-red-400">2 Rejected</Badge>
                             </div>
-                            <div className="space-y-3">
-                              {[1,2,3].map((i) => (
-                                <Card key={i} className="p-4">
-                                  <div className="flex justify-between items-start">
-                                    <div>
-                                      <h5 className="font-medium">TechCorp Recruiter {i}</h5>
-                                      <p className="text-sm text-muted-foreground">recruiter{i}@techcorp.com</p>
-                                      <p className="text-xs text-muted-foreground">Company: TechCorp Inc.</p>
-                                      <p className="text-xs text-muted-foreground">Applied: Jan {i}, 2025</p>
+                            
+                            {pendingRecruiters.length === 0 ? (
+                              <div className="text-center py-8">
+                                <p className="text-muted-foreground">No pending recruiter applications</p>
+                              </div>
+                            ) : (
+                              <div className="space-y-3 max-h-96 overflow-y-auto">
+                                {pendingRecruiters.map((recruiter) => (
+                                  <Card key={recruiter.id} className="p-4">
+                                    <div className="flex justify-between items-start">
+                                      <div className="flex-1">
+                                        <h5 className="font-medium">{recruiter.name}</h5>
+                                        <p className="text-sm text-muted-foreground">{recruiter.email}</p>
+                                        <p className="text-xs text-muted-foreground">Company: {recruiter.company}</p>
+                                        <p className="text-xs text-muted-foreground">Applied: {recruiter.appliedDate}</p>
+                                        <div className="mt-2">
+                                          <p className="text-xs text-muted-foreground">Documents:</p>
+                                          <div className="flex gap-2 mt-1">
+                                            {recruiter.documents.map((doc, idx) => (
+                                              <Badge key={idx} variant="outline" className="text-xs">
+                                                <FileText className="h-2 w-2 mr-1" />
+                                                {doc}
+                                              </Badge>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="flex gap-2 ml-4">
+                                        <Button 
+                                          size="sm" 
+                                          className="bg-green-500/20 text-green-400 hover:bg-green-500/30"
+                                          onClick={() => handleApproveRecruiter(recruiter.id)}
+                                        >
+                                          <CheckCircle className="h-3 w-3 mr-1" />
+                                          Approve
+                                        </Button>
+                                        <Button 
+                                          size="sm" 
+                                          variant="outline" 
+                                          className="text-red-400 hover:bg-red-500/20"
+                                          onClick={() => handleRejectRecruiter(recruiter.id)}
+                                        >
+                                          <XCircle className="h-3 w-3 mr-1" />
+                                          Reject
+                                        </Button>
+                                      </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                      <Button size="sm" className="bg-green-500/20 text-green-400 hover:bg-green-500/30">
-                                        <CheckCircle className="h-3 w-3 mr-1" />
-                                        Approve
-                                      </Button>
-                                      <Button size="sm" variant="outline" className="text-red-400 hover:bg-red-500/20">
-                                        <XCircle className="h-3 w-3 mr-1" />
-                                        Reject
-                                      </Button>
-                                    </div>
-                                  </div>
-                                </Card>
-                              ))}
-                            </div>
+                                  </Card>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </DialogContent>
                       </Dialog>

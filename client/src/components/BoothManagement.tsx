@@ -104,7 +104,7 @@ export default function BoothManagement() {
     {
       id: '1',
       studentName: 'Rahul Sharma',
-      studentEmail: 'rahul@example.com',
+      studentEmail: 'rahul.sharma2024@gmail.com',
       visitTime: '2 minutes ago',
       duration: 3.2,
       actions: ['Viewed positions', 'Downloaded brochure', 'Started chat']
@@ -112,7 +112,7 @@ export default function BoothManagement() {
     {
       id: '2', 
       studentName: 'Priya Patel',
-      studentEmail: 'priya@example.com',
+      studentEmail: 'priya.patel.cs@outlook.com',
       visitTime: '5 minutes ago',
       duration: 2.8,
       actions: ['Viewed company info', 'Asked questions']
@@ -120,7 +120,7 @@ export default function BoothManagement() {
     {
       id: '3',
       studentName: 'Arjun Kumar',
-      studentEmail: 'arjun@example.com',
+      studentEmail: 'arjun.k.dev@gmail.com',
       visitTime: '12 minutes ago',
       duration: 5.1,
       actions: ['Viewed all positions', 'Downloaded resources', 'Scheduled interview']

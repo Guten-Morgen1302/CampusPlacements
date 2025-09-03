@@ -1346,7 +1346,7 @@ Be honest and constructive in your feedback.`;
     wsServer.on('connection', (ws: any) => {
       console.log('WebSocket client connected');
       
-      ws.on('message', (data) => {
+      ws.on('message', (data: any) => {
         try {
           const message = JSON.parse(data.toString());
           console.log('WebSocket message received:', message);

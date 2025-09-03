@@ -58,7 +58,7 @@ export default function AdminDashboard() {
     {
       id: '1',
       type: 'login',
-      user: 'john@student.edu',
+      user: 'arjun.sharma@iitb.ac.in',
       action: 'User logged in successfully',
       timestamp: new Date().toISOString(),
       status: 'success'
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
     {
       id: '2', 
       type: 'application',
-      user: 'sarah@student.edu',
+      user: 'priya.patel@gmail.com',
       action: 'Applied to Software Engineer position',
       timestamp: new Date(Date.now() - 120000).toISOString(),
       status: 'success'
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
     {
       id: '3',
       type: 'registration',
-      user: 'mike@recruiter.com', 
+      user: 'rohit.kumar@tcs.com', 
       action: 'New recruiter registration pending',
       timestamp: new Date(Date.now() - 300000).toISOString(),
       status: 'warning'
@@ -83,9 +83,9 @@ export default function AdminDashboard() {
 
   // User management
   const [users, setUsers] = useState<User[]>([
-    { id: '1', name: 'John Doe', email: 'john@student.edu', role: 'student', status: 'active', lastLogin: '2 minutes ago' },
-    { id: '2', name: 'Jane Smith', email: 'jane@recruiter.com', role: 'recruiter', status: 'active', lastLogin: '1 hour ago' },
-    { id: '3', name: 'Mike Johnson', email: 'mike@student.edu', role: 'student', status: 'disabled', lastLogin: '2 days ago' }
+    { id: '1', name: 'Arjun Sharma', email: 'arjun.sharma@iitb.ac.in', role: 'student', status: 'active', lastLogin: '2 minutes ago' },
+    { id: '2', name: 'Kavya Reddy', email: 'kavya.reddy@infosys.com', role: 'recruiter', status: 'active', lastLogin: '1 hour ago' },
+    { id: '3', name: 'Aadhya Singh', email: 'aadhya.singh@nitd.ac.in', role: 'student', status: 'disabled', lastLogin: '2 days ago' }
   ]);
 
   // Animated stats 
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
     const interval = setInterval(() => {
       // Random activity simulation
       const activityTypes = ['login', 'registration', 'application', 'system'] as const;
-      const users = ['john@student.edu', 'sarah@student.edu', 'mike@recruiter.com', 'admin@placenet.com'];
+      const users = ['arjun.sharma@iitb.ac.in', 'priya.patel@gmail.com', 'rohit.kumar@wipro.com', 'admin@placenet.com'];
       const actions = [
         'User logged in successfully',
         'Applied to Software Engineer position', 

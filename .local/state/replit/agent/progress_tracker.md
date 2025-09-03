@@ -58,3 +58,4 @@
 [x] 57. Fixed file upload limit - increased from 5MB to 10MB for resume uploads
 [x] 58. Fixed student profile 404 error - now returns default profile instead of failing
 [x] 59. All major migration issues resolved - application working correctly
+[x] 60. Brightened cyan colors from 35% to 60% lightness for better visibility while maintaining text readability

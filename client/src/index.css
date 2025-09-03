@@ -11,7 +11,7 @@
   --card-foreground: hsl(0, 0%, 98%);
   --popover: hsl(235, 100%, 4%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --primary: hsl(180, 100%, 50%);
+  --primary: hsl(180, 100%, 65%);
   --primary-foreground: hsl(235, 100%, 4%);
   --secondary: hsl(270, 60%, 50%);
   --secondary-foreground: hsl(0, 0%, 98%);
@@ -23,14 +23,14 @@
   --destructive-foreground: hsl(0, 0%, 100%);
   --border: hsla(240, 30%, 18%, 0.4);
   --input: hsla(240, 20%, 15%, 0.5);
-  --ring: hsl(180, 100%, 50%);
+  --ring: hsl(180, 100%, 65%);
   
-  /* Neon Colors - Reduced brightness for better text readability */
-  --neon-cyan: hsl(180, 85%, 35%);
-  --neon-purple: hsl(270, 50%, 35%);
-  --neon-pink: hsl(330, 85%, 35%);
-  --neon-green: hsl(120, 85%, 35%);
-  --neon-blue: hsl(240, 85%, 35%);
+  /* Neon Colors - Bright and vibrant for visual impact */
+  --neon-cyan: hsl(180, 100%, 60%);
+  --neon-purple: hsl(270, 70%, 55%);
+  --neon-pink: hsl(330, 85%, 55%);
+  --neon-green: hsl(120, 85%, 55%);
+  --neon-blue: hsl(240, 85%, 55%);
   
   /* Fonts */
   --font-orbitron: 'Orbitron', monospace;
@@ -53,7 +53,7 @@
   --card-foreground: hsl(0, 0%, 98%);
   --popover: hsl(235, 100%, 4%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --primary: hsl(180, 100%, 50%);
+  --primary: hsl(180, 100%, 65%);
   --primary-foreground: hsl(235, 100%, 4%);
   --secondary: hsl(270, 60%, 50%);
   --secondary-foreground: hsl(0, 0%, 98%);
@@ -65,7 +65,7 @@
   --destructive-foreground: hsl(0, 0%, 100%);
   --border: hsla(240, 30%, 18%, 0.4);
   --input: hsla(240, 20%, 15%, 0.5);
-  --ring: hsl(180, 100%, 50%);
+  --ring: hsl(180, 100%, 65%);
 }
 
 @layer base {

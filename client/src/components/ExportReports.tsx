@@ -48,19 +48,19 @@ export default function ExportReports() {
       switch (exportConfig.reportType) {
         case 'shortlist':
           data = generateShortlistData(exportConfig);
-          filename = `shortlisted_candidates_${Date.now()}`;
+          filename = `shortlisted_candidates_${exportConfig.includeDetails ? 'detailed_' : ''}${exportConfig.includeMetrics ? 'metrics_' : ''}${Date.now()}`;
           break;
         case 'analytics':
           data = generateAnalyticsData(exportConfig);
-          filename = `recruitment_analytics_${Date.now()}`;
+          filename = `recruitment_analytics_${exportConfig.includeMetrics ? 'enhanced_' : 'basic_'}${Date.now()}`;
           break;
         case 'applications':
           data = generateApplicationsData(exportConfig);
-          filename = `job_applications_${Date.now()}`;
+          filename = `job_applications_${exportConfig.includeDetails ? 'detailed_' : ''}${exportConfig.includeMetrics ? 'metrics_' : ''}${Date.now()}`;
           break;
         case 'events':
           data = generateEventsData(exportConfig);
-          filename = `drive_events_${Date.now()}`;
+          filename = `drive_events_${exportConfig.includeDetails ? 'detailed_' : ''}${exportConfig.includeMetrics ? 'metrics_' : ''}${Date.now()}`;
           break;
       }
 
@@ -74,9 +74,11 @@ export default function ExportReports() {
       return { success: true, filename: `${filename}.${exportConfig.format}` };
     },
     onSuccess: (result) => {
+      const detailsText = config.includeDetails ? ' with detailed info' : '';
+      const metricsText = config.includeMetrics ? ' + performance metrics' : '';
       toast({
-        title: "Report Generated Successfully!",
-        description: `Your ${config.format.toUpperCase()} report has been downloaded: ${result.filename}`,
+        title: "🔥 Report Generated Successfully!",
+        description: `Your ${config.format.toUpperCase()} report has been downloaded${detailsText}${metricsText}: ${result.filename}`,
       });
     },
     onError: () => {
@@ -511,6 +513,9 @@ export default function ExportReports() {
       }
     ];
 
+    // Process data based on configuration options
+    let processedData = baseData;
+    
     // Add additional details if requested
     if (exportConfig.includeDetails) {
       const colleges = ["BITS Pilani", "IIT Delhi", "NIT Trichy", "VIT", "SRM", "DTU", "NSUT", "IIT Bombay", "IIIT Hyderabad", "MIT Manipal"];
@@ -518,7 +523,7 @@ export default function ExportReports() {
       const noticePeriods = ["Immediate", "15 days", "1 month", "2 months", "3 months"];
       const preferences = ["Virtual", "In-person", "Hybrid", "Flexible"];
       
-      return baseData.map((applicant, index) => ({
+      processedData = processedData.map((applicant, index) => ({
         ...applicant,
         phone: `+91 987654${4000 + index}`,
         college: colleges[index % colleges.length],
@@ -534,8 +539,27 @@ export default function ExportReports() {
         currentLocation: index % 2 === 0 ? "Bangalore" : "Delhi"
       }));
     }
+    
+    // Add performance metrics if requested
+    if (exportConfig.includeMetrics) {
+      processedData = processedData.map((applicant, index) => ({
+        ...applicant,
+        applicationSourceEffectiveness: `${60 + Math.floor(Math.random() * 30)}%`,
+        timeToResponse: `${1 + Math.floor(Math.random() * 5)} days`,
+        interviewConversionRate: `${20 + Math.floor(Math.random() * 40)}%`,
+        skillMatchPercentage: `${70 + Math.floor(Math.random() * 25)}%`,
+        culturalFitScore: `${7.0 + Math.random() * 2.5}/10`,
+        communicationSkillsRating: `${6.5 + Math.random() * 3.0}/10`,
+        technicalAssessmentScore: `${60 + Math.floor(Math.random() * 35)}/100`,
+        leadershipPotential: `${5.0 + Math.random() * 4.0}/10`,
+        teamworkRating: `${6.0 + Math.random() * 3.5}/10`,
+        adaptabilityScore: `${65 + Math.floor(Math.random() * 30)}%`,
+        growthPotential: `${70 + Math.floor(Math.random() * 25)}%`,
+        referenceCheckScore: index % 3 === 0 ? "Excellent" : index % 3 === 1 ? "Good" : "Average"
+      }));
+    }
 
-    return baseData;
+    return processedData;
   };
 
   const generateEventsData = (exportConfig: ExportConfig) => {
@@ -614,6 +638,9 @@ export default function ExportReports() {
       }
     ];
 
+    // Process data based on configuration options
+    let processedData = baseData;
+    
     // Add additional details if requested
     if (exportConfig.includeDetails) {
       const organizers = ["Career Services", "Placement Cell", "Industry Relations", "Alumni Network", "Student Council"];
@@ -621,7 +648,7 @@ export default function ExportReports() {
       const coordinators = ["Dr. Sarah Johnson", "Prof. Amit Sharma", "Ms. Priya Gupta", "Dr. Rajesh Kumar", "Prof. Neha Agarwal"];
       const eventTypes = ["Hybrid", "In-person", "Virtual", "Multi-location"];
       
-      return baseData.map((event, index) => ({
+      processedData = processedData.map((event, index) => ({
         ...event,
         organizer: organizers[index % organizers.length],
         venue: venues[index % venues.length],
@@ -638,8 +665,27 @@ export default function ExportReports() {
         transportArrangement: index % 3 === 0 ? "Bus service available" : "Self arrangement"
       }));
     }
+    
+    // Add performance metrics if requested  
+    if (exportConfig.includeMetrics) {
+      processedData = processedData.map((event, index) => ({
+        ...event,
+        attendanceRate: `${75 + Math.floor(Math.random() * 20)}%`,
+        conversionRate: `${15 + Math.floor(Math.random() * 15)}%`,
+        eventROI: `${200 + index * 50}%`,
+        studentSatisfactionScore: `${4.1 + Math.random() * 0.8}/5`,
+        recruiterSatisfactionScore: `${4.0 + Math.random() * 1.0}/5`,
+        costPerHire: `₹${18000 + Math.floor(Math.random() * 12000)}`,
+        timeToHire: `${12 + Math.floor(Math.random() * 8)} days`,
+        qualityOfHire: `${7.5 + Math.random() * 2.0}/10`,
+        diversityScore: `${35 + Math.floor(Math.random() * 25)}%`,
+        followUpPlacement: `${60 + Math.floor(Math.random() * 30)}%`,
+        networkingEffectiveness: `${70 + Math.floor(Math.random() * 25)}%`,
+        brandVisibilityImpact: `${40 + Math.floor(Math.random() * 35)}%`
+      }));
+    }
 
-    return baseData;
+    return processedData;
   };
 
   const downloadCSV = (data: any[], filename: string) => {

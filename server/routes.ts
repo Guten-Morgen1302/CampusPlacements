@@ -632,7 +632,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         linkedinUrl: req.body.linkedinUrl || null,
         githubUrl: req.body.githubUrl || null,
         portfolioUrl: req.body.portfolioUrl || null,
-        expectedSalary: req.body.expectedSalary ? parseInt(req.body.expectedSalary) : null,
+        expectedSalary: req.body.expectedSalary ? Math.min(parseInt(req.body.expectedSalary) || 0, 999999999) : null,
         availableFrom: req.body.availableFrom || null,
         customAnswers: req.body.customAnswers ? JSON.parse(req.body.customAnswers) : null,
         status: 'applied'

@@ -10,6 +10,7 @@ import {
   boolean,
   decimal,
   uuid,
+  bigint,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -76,8 +77,8 @@ export const jobs = pgTable("jobs", {
   company: varchar("company").notNull(),
   location: varchar("location"),
   type: varchar("type").notNull(), // full-time, part-time, internship
-  salaryMin: integer("salary_min"),
-  salaryMax: integer("salary_max"),
+  salaryMin: bigint("salary_min", { mode: "number" }),
+  salaryMax: bigint("salary_max", { mode: "number" }),
   description: text("description"),
   requirements: jsonb("requirements").$type<string[]>().default([]),
   skills: jsonb("skills").$type<string[]>().default([]),
@@ -98,7 +99,7 @@ export const applications = pgTable("applications", {
   linkedinUrl: text("linkedin_url"),
   githubUrl: text("github_url"),
   portfolioUrl: text("portfolio_url"),
-  expectedSalary: integer("expected_salary"),
+  expectedSalary: bigint("expected_salary", { mode: "number" }),
   availableFrom: varchar("available_from"),
   customAnswers: jsonb("custom_answers").$type<Record<string, string>>(),
   appliedAt: timestamp("applied_at").defaultNow(),

@@ -570,8 +570,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/recruiter/jobs', isAuthenticated, async (req: any, res) => {
     try {
-      // Add cache for better performance  
-      res.set('Cache-Control', 'public, max-age=300'); // 5 minutes cache
+      // No caching for real-time job updates
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
       
       const userId = req.user.id;
       const jobs = await storage.getJobsByRecruiter(userId);

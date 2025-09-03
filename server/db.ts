@@ -10,7 +10,9 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: false, // Disable SSL for Replit's built-in database
+  ssl: process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('neon.tech') ? {
+    rejectUnauthorized: false
+  } : false, // Enable SSL for Neon and production environments
 });
 
 export const db = drizzle(pool, { schema });

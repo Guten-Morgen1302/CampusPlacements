@@ -24,7 +24,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 
 type InterviewMode = "technical" | "behavioral" | "hr" | "custom";
-type InterviewState = "setup" | "active" | "feedback";
+type InterviewState = "setup" | "active" | "analyzing" | "feedback";
 
 export default function InterviewPractice() {
   const { user } = useAuth();
@@ -90,12 +90,11 @@ export default function InterviewPractice() {
   };
 
   const generateFeedback = async (allAnswers: string[]) => {
-    setInterviewState("feedback");
+    // Show analyzing state with cool animation
+    setInterviewState("analyzing");
     
-    toast({
-      title: "Analyzing Responses",
-      description: "AI is analyzing your answers, please wait...",
-    });
+    // Wait a bit to show the animation, then start analysis
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     try {
       // Analyze each answer with AI
@@ -230,6 +229,7 @@ export default function InterviewPractice() {
       };
       
       setFeedback(intelligentFeedback);
+      setInterviewState("feedback");
       
       toast({
         title: "Analysis Complete!",
@@ -238,6 +238,7 @@ export default function InterviewPractice() {
       
     } catch (error) {
       console.error("Error generating AI feedback:", error);
+      setInterviewState("feedback");
       toast({
         title: "Analysis Error",
         description: "Failed to analyze responses. Please try again.",
@@ -415,6 +416,69 @@ export default function InterviewPractice() {
                     />
                   </div>
                 </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {interviewState === "analyzing" && (
+            <div className="max-w-4xl mx-auto text-center" data-testid="analyzing-section">
+              <Card className="glass-card neon-border p-12">
+                <div className="space-y-8">
+                  {/* AI Brain Animation */}
+                  <div className="relative mx-auto w-32 h-32">
+                    <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink rounded-full animate-spin opacity-20"></div>
+                    <div className="absolute inset-2 bg-gradient-to-r from-neon-purple via-neon-pink to-neon-cyan rounded-full animate-ping opacity-30"></div>
+                    <div className="absolute inset-4 bg-background rounded-full flex items-center justify-center">
+                      <Brain className="h-12 w-12 text-neon-cyan animate-pulse" />
+                    </div>
+                    
+                    {/* Floating particles */}
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={`absolute w-2 h-2 bg-neon-${['cyan', 'purple', 'pink', 'green'][i % 4]} rounded-full`}
+                        style={{
+                          top: `${20 + Math.sin(i * 45) * 30}%`,
+                          left: `${50 + Math.cos(i * 45) * 35}%`,
+                          animation: `float 2s ease-in-out infinite ${i * 0.2}s`,
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Analyzing Text */}
+                  <div className="space-y-4">
+                    <h2 className="text-3xl font-bold font-orbitron neon-text">
+                      Analyzing Responses
+                    </h2>
+                    <p className="text-xl text-muted-foreground">
+                      AI is analyzing your answers, please wait...
+                    </p>
+                    
+                    {/* Progress indicators */}
+                    <div className="space-y-3 max-w-md mx-auto">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-neon-cyan rounded-full animate-pulse"></div>
+                        <span className="text-sm">Processing responses...</span>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-neon-purple rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                        <span className="text-sm">Evaluating content quality...</span>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-neon-pink rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+                        <span className="text-sm">Generating feedback...</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Animated progress bar */}
+                  <div className="max-w-md mx-auto">
+                    <div className="w-full bg-background/50 rounded-full h-2 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink rounded-full animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
               </Card>
             </div>
           )}

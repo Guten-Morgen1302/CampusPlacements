@@ -84,7 +84,7 @@ export default function Navigation({ user }: NavigationProps) {
       { id: 'recruiter-portal', label: 'Recruiter Portal', icon: Building2, action: () => navigateToPage('/recruiter') }
     ] : []),
     ...(user.role === 'recruiter' ? [
-      { id: 'student', label: 'Student Portal', icon: GraduationCap, action: () => navigateToPage('/student') }
+      { id: 'student', label: 'Student Portal', icon: GraduationCap, action: () => scrollToSection('student-view') }
     ] : []),
   ], [user.role]);
 

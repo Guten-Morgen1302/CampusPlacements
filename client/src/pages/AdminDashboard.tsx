@@ -307,64 +307,6 @@ export default function AdminDashboard() {
               Manage the entire PlaceNet ecosystem
             </p>
             
-            {/* DEBUG TEST BUTTON */}
-            <button 
-              onClick={() => alert('TEST BUTTON WORKS!')} 
-              style={{background: 'red', color: 'white', padding: '10px', margin: '10px', fontSize: '16px', cursor: 'pointer'}}
-            >
-              🔥 CLICK ME TO TEST 🔥
-            </button>
-            
-            {/* TEST: Move the problematic buttons here to see if location is the issue */}
-            <div style={{display: 'flex', gap: '10px', justifyContent: 'center', margin: '20px 0'}}>
-              <button 
-                className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 cursor-pointer"
-                onClick={() => {
-                  console.log("MANAGE ROLES CLICKED!");
-                  alert("Manage Roles works!");
-                  setUserModalOpen(true);
-                }}
-                style={{zIndex: 9999}}
-              >
-                TEST Manage Roles
-              </button>
-              
-              <button 
-                className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 cursor-pointer"
-                onClick={() => {
-                  console.log("BULK ACTIONS CLICKED!");
-                  alert("Bulk Actions works!");
-                  setBulkModalOpen(true);
-                }}
-                style={{zIndex: 9999}}
-              >
-                TEST Bulk Actions
-              </button>
-              
-              <button 
-                className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 cursor-pointer"
-                onClick={() => {
-                  console.log("VIEW ACTIVITY CLICKED!");
-                  alert("View Activity works!");
-                  setActivityModalOpen(true);
-                }}
-                style={{zIndex: 9999}}
-              >
-                TEST View Activity
-              </button>
-              
-              <button 
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer"
-                onClick={() => {
-                  console.log("VERIFY ACCOUNTS CLICKED!");
-                  alert("Verify Accounts works!");
-                  setVerificationModalOpen(true);
-                }}
-                style={{zIndex: 9999}}
-              >
-                TEST Verify Accounts
-              </button>
-            </div>
           </div>
 
           {/* Overview Stats - Keep as shown in image */}
@@ -590,17 +532,18 @@ export default function AdminDashboard() {
                   </Card>
 
                   {/* User Management Features */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" style={{zIndex: 9999, position: 'relative'}}>
                     <Card className="p-4 bg-cyan-500/10 border-cyan-500/20">
                       <h3 className="font-semibold text-cyan-300 mb-2">Role Management</h3>
                       <p className="text-sm text-muted-foreground mb-3">Create/edit/delete users, change roles</p>
                       <button 
                         className="w-full px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 cursor-pointer"
                         onClick={() => {
-                          console.log("BUTTON CLICKED!");
-                          alert("Button works!");
+                          console.log("MANAGE ROLES CLICKED!");
+                          alert("Manage Roles works!");
                           setUserModalOpen(true);
                         }}
+                        style={{zIndex: 9999, position: 'relative'}}
                         data-testid="button-manage-roles"
                       >
                         Manage Roles
@@ -663,10 +606,11 @@ export default function AdminDashboard() {
                       <button 
                         className="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 cursor-pointer"
                         onClick={() => {
-                          console.log("BULK BUTTON CLICKED!");
-                          alert("Bulk button works!");
+                          console.log("BULK ACTIONS CLICKED!");
+                          alert("Bulk Actions works!");
                           setBulkModalOpen(true);
                         }}
+                        style={{zIndex: 9999, position: 'relative'}}
                         data-testid="button-bulk-operations"
                       >
                         Bulk Actions
@@ -760,10 +704,11 @@ export default function AdminDashboard() {
                       <button 
                         className="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 cursor-pointer"
                         onClick={() => {
-                          console.log("ACTIVITY BUTTON CLICKED!");
-                          alert("Activity button works!");
+                          console.log("VIEW ACTIVITY CLICKED!");
+                          alert("View Activity works!");
                           setActivityModalOpen(true);
                         }}
+                        style={{zIndex: 9999, position: 'relative'}}
                         data-testid="button-activity-monitor"
                       >
                         View Activity
@@ -844,10 +789,11 @@ export default function AdminDashboard() {
                       <button 
                         className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer"
                         onClick={() => {
-                          console.log("VERIFY BUTTON CLICKED!");
-                          alert("Verify button works!");
+                          console.log("VERIFY ACCOUNTS CLICKED!");
+                          alert("Verify Accounts works!");
                           setVerificationModalOpen(true);
                         }}
+                        style={{zIndex: 9999, position: 'relative'}}
                         data-testid="button-verify-accounts"
                       >
                         Verify Accounts

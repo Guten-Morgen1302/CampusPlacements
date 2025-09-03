@@ -82,12 +82,12 @@ export default function RecruiterDashboard({ user }: RecruiterDashboardProps) {
   const [showApplicationModal, setShowApplicationModal] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
 
-  // Fetch recruiter's jobs with faster loading
+  // Fetch recruiter's jobs with immediate updates
   const { data: jobs = [], isLoading: isJobsLoading, error: jobsError } = useQuery<Job[]>({
     queryKey: ['/api/recruiter/jobs'],
     enabled: user.role === 'recruiter' || user.role === 'admin',
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: 0, // Always refetch when invalidated
+    refetchOnWindowFocus: true, // Refetch when window gets focus
   });
 
   // Fetch recruitment metrics with faster loading

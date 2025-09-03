@@ -92,82 +92,158 @@ export default function InterviewPractice() {
   const generateFeedback = async (allAnswers: string[]) => {
     setInterviewState("feedback");
     
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Dynamic AI feedback that changes every time
-    const possibleFeedbacks = [
-      "Good technical understanding but needs more concrete examples",
-      "Strong conceptual knowledge with clear communication",
-      "Solid foundation but could be more detailed in explanations",
-      "Great problem-solving approach with room for optimization",
-      "Clear reasoning but consider discussing edge cases more",
-      "Excellent structure but add more real-world context",
-      "Good pace and confidence, enhance technical depth"
-    ];
-
-    const possibleStrengths = [
-      "Clear explanation", "Good structure", "Confident delivery", "Strong technical foundation",
-      "Logical reasoning", "Good examples", "Clear communication", "Thoughtful approach",
-      "Well-organized response", "Strong problem-solving", "Good pace", "Relevant experience"
-    ];
-
-    const possibleImprovements = [
-      "Add real-world examples", "Be more specific about implementation",
-      "Discuss edge cases", "Mention time/space complexity",
-      "Provide more context", "Use concrete numbers/metrics",
-      "Elaborate on challenges faced", "Explain decision-making process",
-      "Add technical details", "Structure using STAR method"
-    ];
-
-    const overallFeedbacks = [
-      "Strong technical knowledge with good communication skills. Focus on providing more concrete examples.",
-      "Excellent problem-solving approach. Consider slowing down slightly for better clarity.",
-      "Good foundation with clear reasoning. Work on adding more specific implementation details.",
-      "Confident delivery with solid understanding. Enhance responses with real-world applications.",
-      "Clear communication with logical structure. Add more quantifiable achievements and metrics.",
-      "Strong conceptual grasp with room for deeper technical exploration.",
-      "Good pace and structure. Focus on providing more detailed explanations with examples."
-    ];
-
-    const allRecommendations = [
-      "Practice explaining concepts with real-world examples",
-      "Work on structuring answers using the STAR method",
-      "Practice common algorithm questions with complexity analysis",
-      "Improve confidence by practicing more behavioral questions",
-      "Focus on quantifying achievements with specific numbers",
-      "Practice whiteboarding and system design problems",
-      "Work on explaining technical concepts to non-technical audiences",
-      "Practice handling follow-up questions and clarifications",
-      "Develop better examples from your project experience",
-      "Focus on storytelling techniques for behavioral questions",
-      "Practice time management during technical problems",
-      "Work on explaining trade-offs in technical decisions"
-    ];
-
-    const mockFeedback = {
-      overallScore: Math.floor(Math.random() * 25) + 75, // 75-100
-      confidenceScore: Math.floor(Math.random() * 30) + 70, // 70-100  
-      clarityScore: Math.floor(Math.random() * 25) + 75, // 75-100
-      correctnessScore: Math.floor(Math.random() * 30) + 70, // 70-100
-      paceScore: Math.floor(Math.random() * 20) + 80, // 80-100
-      detailedFeedback: questionSets[interviewMode].slice(0, allAnswers.length).map((question, index) => ({
-        question: question,
-        score: Math.floor(Math.random() * 30) + 70, // 70-100
-        feedback: possibleFeedbacks[Math.floor(Math.random() * possibleFeedbacks.length)],
-        strengths: possibleStrengths.sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 2) + 2), // 2-4 random strengths
-        improvements: possibleImprovements.sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 2) + 2) // 2-4 random improvements
-      })),
-      overallFeedback: overallFeedbacks[Math.floor(Math.random() * overallFeedbacks.length)],
-      recommendations: allRecommendations.sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 3) + 4) // 4-7 random recommendations
-    };
-    
-    setFeedback(mockFeedback);
-    
     toast({
-      title: "Feedback Generated",
-      description: `Overall score: ${mockFeedback.overallScore}/100`,
+      title: "Analyzing Responses",
+      description: "AI is analyzing your answers, please wait...",
     });
+    
+    try {
+      // Analyze each answer with AI
+      const detailedFeedback = [];
+      let totalScore = 0;
+      let totalConfidence = 0;
+      let totalClarity = 0;
+      let totalContent = 0;
+      
+      for (let i = 0; i < allAnswers.length; i++) {
+        const question = questionSets[interviewMode][i];
+        const answer = allAnswers[i];
+        
+        if (!answer || answer.trim().length === 0) {
+          // Handle empty answers
+          detailedFeedback.push({
+            question: question,
+            score: 0,
+            feedback: "No answer provided",
+            strengths: [],
+            improvements: ["Provide an answer to the question", "Take time to think before responding"]
+          });
+          continue;
+        }
+        
+        try {
+          const response = await fetch('/api/interview/analyze-answer', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              question: question,
+              answer: answer,
+              category: interviewMode
+            }),
+          });
+          
+          if (!response.ok) {
+            throw new Error('Analysis failed');
+          }
+          
+          const analysis = await response.json();
+          
+          detailedFeedback.push({
+            question: question,
+            score: analysis.score,
+            feedback: analysis.feedback,
+            strengths: analysis.strengths,
+            improvements: analysis.improvements
+          });
+          
+          totalScore += analysis.score;
+          totalConfidence += analysis.confidenceScore;
+          totalClarity += analysis.clarityScore;
+          totalContent += analysis.contentScore;
+          
+        } catch (error) {
+          console.error('Error analyzing answer:', error);
+          // Fallback for individual question if AI fails
+          const fallbackScore = answer.length > 20 ? 50 : 20;
+          detailedFeedback.push({
+            question: question,
+            score: fallbackScore,
+            feedback: "AI analysis temporarily unavailable. Basic scoring applied based on response length.",
+            strengths: answer.length > 50 ? ["Provided detailed response"] : ["Attempted to answer"],
+            improvements: ["Add more specific details", "Provide concrete examples"]
+          });
+          totalScore += fallbackScore;
+          totalConfidence += fallbackScore;
+          totalClarity += fallbackScore;
+          totalContent += fallbackScore;
+        }
+      }
+      
+      const numAnswers = allAnswers.length || 1;
+      const overallScore = Math.round(totalScore / numAnswers);
+      const avgConfidence = Math.round(totalConfidence / numAnswers);
+      const avgClarity = Math.round(totalClarity / numAnswers);
+      const avgContent = Math.round(totalContent / numAnswers);
+      
+      // Generate overall feedback based on actual performance
+      let overallFeedback = "";
+      let recommendations = [];
+      
+      if (overallScore >= 80) {
+        overallFeedback = "Excellent performance! You demonstrated strong knowledge and communication skills throughout the interview.";
+        recommendations = [
+          "Continue practicing with more advanced questions",
+          "Focus on leadership and behavioral scenarios",
+          "Practice whiteboarding complex problems"
+        ];
+      } else if (overallScore >= 60) {
+        overallFeedback = "Good performance with room for improvement. You showed solid understanding but could enhance your responses.";
+        recommendations = [
+          "Practice providing more concrete examples",
+          "Work on structuring answers using frameworks like STAR",
+          "Study common interview patterns for your field",
+          "Practice explaining technical concepts clearly"
+        ];
+      } else if (overallScore >= 40) {
+        overallFeedback = "Fair performance. Focus on improving response quality and providing more relevant content.";
+        recommendations = [
+          "Study fundamental concepts more thoroughly",
+          "Practice basic interview questions extensively",
+          "Work on communication and presentation skills",
+          "Prepare specific examples from your experience",
+          "Practice explaining your thought process step-by-step"
+        ];
+      } else {
+        overallFeedback = "Needs significant improvement. Consider reviewing fundamental concepts and practicing more before real interviews.";
+        recommendations = [
+          "Review basic concepts in your field",
+          "Practice with simple questions first",
+          "Work on providing relevant answers to questions asked",
+          "Focus on clear communication",
+          "Consider taking additional courses or training",
+          "Practice mock interviews with peers or mentors"
+        ];
+      }
+      
+      const intelligentFeedback = {
+        overallScore: overallScore,
+        confidenceScore: avgConfidence,
+        clarityScore: avgClarity,
+        correctnessScore: avgContent,
+        paceScore: Math.round((avgConfidence + avgClarity) / 2), // Estimate pace from confidence and clarity
+        detailedFeedback: detailedFeedback,
+        overallFeedback: overallFeedback,
+        recommendations: recommendations
+      };
+      
+      setFeedback(intelligentFeedback);
+      
+      toast({
+        title: "Analysis Complete!",
+        description: `Your overall score: ${overallScore}/100. ${overallScore >= 70 ? 'Great job!' : 'Keep practicing!'}`,
+      });
+      
+    } catch (error) {
+      console.error("Error generating AI feedback:", error);
+      toast({
+        title: "Analysis Error",
+        description: "Failed to analyze responses. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const toggleRecording = () => {

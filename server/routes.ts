@@ -844,6 +844,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI-powered Interview Analysis
+  app.post('/api/interview/analyze-answer', isAuthenticated, async (req: any, res) => {
+    try {
+      const { question, answer, category } = req.body;
+      
+      if (!question || !answer || answer.trim().length === 0) {
+        return res.status(400).json({ message: "Question and answer are required" });
+      }
+
+      // Import OpenAI only when needed
+      const { default: OpenAI } = await import('openai');
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+      // Create AI analysis prompt
+      const prompt = `You are an expert interview coach. Analyze this interview response and provide detailed feedback.
+
+Question (${category}): "${question}"
+Answer: "${answer}"
+
+Please analyze the answer and respond with a JSON object containing:
+{
+  "score": number (0-100, where 0 = complete nonsense/irrelevant, 100 = excellent answer),
+  "confidenceScore": number (0-100, how confident the answer sounds),
+  "clarityScore": number (0-100, how clear and well-structured the answer is),
+  "relevanceScore": number (0-100, how relevant the answer is to the question),
+  "contentScore": number (0-100, quality of the actual content/substance),
+  "strengths": array of strings (2-4 positive aspects),
+  "improvements": array of strings (2-4 areas for improvement),
+  "feedback": string (detailed feedback paragraph),
+  "isRelevant": boolean (true if answer addresses the question, false if nonsense/irrelevant)
+}
+
+Scoring Guidelines:
+- If the answer is complete gibberish, random text, or completely unrelated to the question, score 0-20
+- If the answer shows some attempt but is poor quality, score 20-40
+- If the answer is adequate but basic, score 40-60
+- If the answer is good with some strong points, score 60-80
+- If the answer is excellent with great examples and insights, score 80-100
+
+Be honest and constructive in your feedback.`;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released August 7, 2025. do not change this unless explicitly requested by the user
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+      });
+
+      const analysis = JSON.parse(response.choices[0].message.content || '{}');
+      
+      // Ensure all scores are numbers and within valid range
+      const validatedAnalysis = {
+        score: Math.max(0, Math.min(100, Number(analysis.score) || 0)),
+        confidenceScore: Math.max(0, Math.min(100, Number(analysis.confidenceScore) || 0)),
+        clarityScore: Math.max(0, Math.min(100, Number(analysis.clarityScore) || 0)),
+        relevanceScore: Math.max(0, Math.min(100, Number(analysis.relevanceScore) || 0)),
+        contentScore: Math.max(0, Math.min(100, Number(analysis.contentScore) || 0)),
+        strengths: Array.isArray(analysis.strengths) ? analysis.strengths : ["Response provided"],
+        improvements: Array.isArray(analysis.improvements) ? analysis.improvements : ["Add more detail"],
+        feedback: analysis.feedback || "Response analyzed",
+        isRelevant: Boolean(analysis.isRelevant)
+      };
+
+      console.log(`AI Analysis for "${question.substring(0, 50)}...": Score ${validatedAnalysis.score}/100`);
+      res.json(validatedAnalysis);
+    } catch (error) {
+      console.error("Error analyzing interview answer:", error);
+      // Fallback to basic analysis if AI fails
+      const answer = req.body.answer || "";
+      const fallbackScore = answer.trim().length > 10 ? 50 : 10; // Basic length-based scoring
+      
+      res.json({
+        score: fallbackScore,
+        confidenceScore: fallbackScore,
+        clarityScore: fallbackScore,
+        relevanceScore: fallbackScore,
+        contentScore: fallbackScore,
+        strengths: ["Response provided"],
+        improvements: ["Add more specific details", "Provide concrete examples"],
+        feedback: "AI analysis temporarily unavailable. Basic scoring applied.",
+        isRelevant: answer.trim().length > 10
+      });
+    }
+  });
+
   // Interview Routes
   app.post('/api/interviews', isAuthenticated, async (req: any, res) => {
     try {

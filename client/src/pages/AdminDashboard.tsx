@@ -1,4 +1,4 @@
-import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import Navigation from "@/components/Navigation";
@@ -10,7 +10,7 @@ import { Users, Building, TrendingUp, Activity } from "lucide-react";
 import { isUnauthorizedError } from "@/lib/authUtils";
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, isLoading } = useFirebaseAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {

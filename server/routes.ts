@@ -87,7 +87,7 @@ const uploadStorage = multer.diskStorage({
 const upload = multer({ 
   storage: uploadStorage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 10 * 1024 * 1024 // 10MB limit
   },
   fileFilter: function (req, file, cb) {
     const allowedTypes = /pdf|doc|docx/;
@@ -206,7 +206,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.id;
       const profile = await storage.getStudentProfile(userId);
       if (!profile) {
-        return res.status(404).json({ message: "Profile not found" });
+        // Return default profile structure instead of 404
+        const defaultProfile = {
+          userId,
+          firstName: req.user.firstName || '',
+          lastName: req.user.lastName || '',
+          email: req.user.email || '',
+          phone: '',
+          dateOfBirth: null,
+          address: '',
+          university: '',
+          degree: '',
+          graduationYear: null,
+          cgpa: null,
+          skills: [],
+          achievements: [],
+          projects: [],
+          certifications: [],
+          languages: []
+        };
+        return res.json(defaultProfile);
       }
       res.json(profile);
     } catch (error) {

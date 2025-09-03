@@ -204,11 +204,9 @@
   .neon-text {
     color: var(--neon-cyan);
     text-shadow: 
-      0 0 5px var(--neon-cyan),
-      0 0 10px var(--neon-cyan),
-      0 0 15px var(--neon-cyan),
-      0 0 20px var(--neon-cyan);
-    animation: glow 2s ease-in-out infinite alternate;
+      0 0 2px var(--neon-cyan),
+      0 0 4px var(--neon-cyan);
+    /* Removed heavy glow animation for cleaner look */
   }
 
   /* Particle */
@@ -396,17 +394,13 @@
   @keyframes glow {
     from {
       text-shadow: 
-        0 0 5px var(--neon-cyan),
-        0 0 10px var(--neon-cyan),
-        0 0 15px var(--neon-cyan),
-        0 0 20px var(--neon-cyan);
+        0 0 2px var(--neon-cyan),
+        0 0 4px var(--neon-cyan);
     }
     to {
       text-shadow: 
-        0 0 10px var(--neon-cyan),
-        0 0 20px var(--neon-cyan),
-        0 0 30px var(--neon-cyan),
-        0 0 40px var(--neon-cyan);
+        0 0 3px var(--neon-cyan),
+        0 0 6px var(--neon-cyan);
     }
   }
 

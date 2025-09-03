@@ -1343,7 +1343,7 @@ Be honest and constructive in your feedback.`;
       path: '/ws'
     });
 
-    wsServer.on('connection', (ws) => {
+    wsServer.on('connection', (ws: any) => {
       console.log('WebSocket client connected');
       
       ws.on('message', (data) => {
@@ -1351,12 +1351,30 @@ Be honest and constructive in your feedback.`;
           const message = JSON.parse(data.toString());
           console.log('WebSocket message received:', message);
           
-          // Broadcast to all connected clients
-          wsServer.clients.forEach(client => {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(data.toString());
-            }
-          });
+          // Handle different message types
+          if (message.type === 'announcement') {
+            // Broadcast announcement to all connected clients
+            const announcementData = JSON.stringify({
+              type: 'system_announcement',
+              title: message.title,
+              message: message.message,
+              priority: message.priority,
+              timestamp: message.timestamp
+            });
+            
+            wsServer.clients.forEach(client => {
+              if (client.readyState === WebSocket.OPEN) {
+                client.send(announcementData);
+              }
+            });
+          } else {
+            // Broadcast to all connected clients except sender
+            wsServer.clients.forEach(client => {
+              if (client !== ws && client.readyState === WebSocket.OPEN) {
+                client.send(data.toString());
+              }
+            });
+          }
         } catch (error) {
           console.error('WebSocket message error:', error);
         }
@@ -1366,6 +1384,27 @@ Be honest and constructive in your feedback.`;
         console.log('WebSocket client disconnected');
       });
     });
+
+    // Broadcast admin activity updates every 10 seconds
+    setInterval(() => {
+      if (wsServer.clients.size > 0) {
+        const activityUpdate = JSON.stringify({
+          type: 'admin_activity',
+          data: {
+            timestamp: new Date().toISOString(),
+            activeConnections: wsServer.clients.size,
+            systemStatus: 'healthy'
+          }
+        });
+
+        wsServer.clients.forEach(client => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(activityUpdate);
+          }
+        });
+      }
+    }, 10000);
+
   } catch (error) {
     console.error('WebSocket server setup error:', error);
   }

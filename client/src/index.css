@@ -25,12 +25,12 @@
   --input: hsla(240, 20%, 15%, 0.5);
   --ring: hsl(180, 100%, 50%);
   
-  /* Neon Colors */
-  --neon-cyan: hsl(180, 100%, 50%);
-  --neon-purple: hsl(270, 60%, 50%);
-  --neon-pink: hsl(330, 100%, 50%);
-  --neon-green: hsl(120, 100%, 50%);
-  --neon-blue: hsl(240, 100%, 50%);
+  /* Neon Colors - Reduced brightness for better text readability */
+  --neon-cyan: hsl(180, 85%, 35%);
+  --neon-purple: hsl(270, 50%, 35%);
+  --neon-pink: hsl(330, 85%, 35%);
+  --neon-green: hsl(120, 85%, 35%);
+  --neon-blue: hsl(240, 85%, 35%);
   
   /* Fonts */
   --font-orbitron: 'Orbitron', monospace;

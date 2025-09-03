@@ -31,7 +31,7 @@ function setupSimpleAuth(app: Express) {
     const pgStore = connectPg(session);
     sessionStore = new pgStore({
       conString: process.env.DATABASE_URL,
-      createTableIfMissing: true,
+      createTableIfMissing: false, // Don't recreate table - it already exists
       ttl: sessionTtl,
       tableName: "user_sessions",
       pruneSessionInterval: false, // Disable auto-pruning to avoid index conflicts

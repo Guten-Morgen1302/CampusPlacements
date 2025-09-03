@@ -47,19 +47,19 @@ export default function ExportReports() {
       
       switch (exportConfig.reportType) {
         case 'shortlist':
-          data = generateShortlistData();
+          data = generateShortlistData(exportConfig);
           filename = `shortlisted_candidates_${Date.now()}`;
           break;
         case 'analytics':
-          data = generateAnalyticsData();
+          data = generateAnalyticsData(exportConfig);
           filename = `recruitment_analytics_${Date.now()}`;
           break;
         case 'applications':
-          data = generateApplicationsData();
+          data = generateApplicationsData(exportConfig);
           filename = `job_applications_${Date.now()}`;
           break;
         case 'events':
-          data = generateEventsData();
+          data = generateEventsData(exportConfig);
           filename = `drive_events_${Date.now()}`;
           break;
       }
@@ -88,119 +88,221 @@ export default function ExportReports() {
     },
   });
 
-  const generateShortlistData = () => [
-    {
-      studentName: "Arjun Sharma",
-      email: "arjun@example.com",
-      cgpa: 8.5,
-      skills: "React, Node.js, TypeScript",
-      jobTitle: "Full Stack Developer",
-      company: "Google",
-      status: "Interview Scheduled",
-      matchPercentage: 95,
-      appliedDate: "2024-08-25",
-      lastUpdated: "2024-08-30"
-    },
-    {
-      studentName: "Priya Patel",
-      email: "priya@example.com",
-      cgpa: 9.1,
-      skills: "Python, Django, AWS",
-      jobTitle: "Backend Developer",
-      company: "Microsoft",
-      status: "Shortlisted",
-      matchPercentage: 88,
-      appliedDate: "2024-08-26",
-      lastUpdated: "2024-08-29"
-    },
-    {
-      studentName: "Rahul Kumar",
-      email: "rahul@example.com",
-      cgpa: 8.8,
-      skills: "Java, Spring Boot, Microservices",
-      jobTitle: "Software Engineer",
-      company: "Apple",
-      status: "Technical Round",
-      matchPercentage: 92,
-      appliedDate: "2024-08-24",
-      lastUpdated: "2024-08-30"
-    }
-  ];
+  const generateShortlistData = (exportConfig: ExportConfig) => {
+    const baseData = [
+      {
+        studentName: "Arjun Sharma",
+        email: "arjun@example.com",
+        cgpa: 8.5,
+        skills: "React, Node.js, TypeScript",
+        jobTitle: "Full Stack Developer",
+        company: "Google",
+        status: "Interview Scheduled",
+        matchPercentage: 95,
+        appliedDate: "2024-08-25",
+        lastUpdated: "2024-08-30"
+      },
+      {
+        studentName: "Priya Patel",
+        email: "priya@example.com",
+        cgpa: 9.1,
+        skills: "Python, Django, AWS",
+        jobTitle: "Backend Developer",
+        company: "Microsoft",
+        status: "Shortlisted",
+        matchPercentage: 88,
+        appliedDate: "2024-08-26",
+        lastUpdated: "2024-08-29"
+      },
+      {
+        studentName: "Rahul Kumar",
+        email: "rahul@example.com",
+        cgpa: 8.8,
+        skills: "Java, Spring Boot, Microservices",
+        jobTitle: "Software Engineer",
+        company: "Apple",
+        status: "Technical Round",
+        matchPercentage: 92,
+        appliedDate: "2024-08-24",
+        lastUpdated: "2024-08-30"
+      }
+    ];
 
-  const generateAnalyticsData = () => [
-    {
-      metric: "Total Applications",
-      value: 156,
-      period: "Last 30 days",
-      change: "+23%",
-      category: "Volume"
-    },
-    {
-      metric: "Interview Rate",
-      value: "23%",
-      period: "Last 30 days", 
-      change: "+5%",
-      category: "Conversion"
-    },
-    {
-      metric: "Hire Rate",
-      value: "8%",
-      period: "Last 30 days",
-      change: "+2%",
-      category: "Conversion"
-    },
-    {
-      metric: "Average Time to Hire",
-      value: "15 days",
-      period: "Last 30 days",
-      change: "-3 days",
-      category: "Efficiency"
+    // Add additional details if requested
+    if (exportConfig.includeDetails) {
+      return baseData.map(student => ({
+        ...student,
+        phone: "+91 9876543210",
+        college: "IIT Delhi",
+        branch: "Computer Science",
+        graduationYear: 2024,
+        resumeScore: 92,
+        interviewScore: 88,
+        technicalSkillsRating: 9.2,
+        communicationRating: 8.7,
+        problemSolvingRating: 9.0,
+        linkedinProfile: "linkedin.com/in/profile",
+        githubProfile: "github.com/profile",
+        previousInternships: "Tech Internship 2023",
+        certifications: "AWS Certified Developer"
+      }));
     }
-  ];
 
-  const generateApplicationsData = () => [
-    {
-      applicantName: "Sneha Reddy",
-      jobTitle: "UI/UX Designer",
-      company: "DesignStudio",
-      applicationDate: "2024-08-28",
-      status: "Applied",
-      resumeScore: 87,
-      coverLetterSubmitted: "Yes",
-      skills: "Figma, React, Design Systems"
-    },
-    {
-      applicantName: "Vikash Singh",
-      jobTitle: "DevOps Engineer", 
-      company: "CloudOps",
-      applicationDate: "2024-08-27",
-      status: "Screening",
-      resumeScore: 94,
-      coverLetterSubmitted: "Yes",
-      skills: "Docker, Kubernetes, AWS"
-    }
-  ];
+    return baseData;
+  };
 
-  const generateEventsData = () => [
-    {
-      eventName: "Tech Giants Hiring Drive 2024",
-      date: "2024-09-15",
-      location: "Main Auditorium",
-      registeredStudents: 156,
-      participatingCompanies: 4,
-      status: "Upcoming",
-      expectedHires: 25
-    },
-    {
-      eventName: "Startup Weekend Recruitment",
-      date: "2024-09-22",
-      location: "Innovation Hub",
-      registeredStudents: 78,
-      participatingCompanies: 4,
-      status: "Upcoming",
-      expectedHires: 15
+  const generateAnalyticsData = (exportConfig: ExportConfig) => {
+    const baseMetrics = [
+      {
+        metric: "Total Applications",
+        value: 156,
+        period: "Last 30 days",
+        change: "+23%",
+        category: "Volume"
+      },
+      {
+        metric: "Interview Rate",
+        value: "23%",
+        period: "Last 30 days", 
+        change: "+5%",
+        category: "Conversion"
+      },
+      {
+        metric: "Hire Rate",
+        value: "8%",
+        period: "Last 30 days",
+        change: "+2%",
+        category: "Conversion"
+      },
+      {
+        metric: "Average Time to Hire",
+        value: "15 days",
+        period: "Last 30 days",
+        change: "-3 days",
+        category: "Efficiency"
+      }
+    ];
+
+    // Add enhanced metrics if requested
+    if (exportConfig.includeMetrics) {
+      const enhancedMetrics = [
+        {
+          metric: "Cost Per Hire",
+          value: "₹25,000",
+          period: "Last 30 days",
+          change: "-₹3,000",
+          category: "Financial",
+          breakdown: "Sourcing: ₹10k, Screening: ₹8k, Interview: ₹7k",
+          benchmark: "Industry Average: ₹30,000"
+        },
+        {
+          metric: "Quality of Hire Score",
+          value: "8.2/10",
+          period: "Last 30 days",
+          change: "+0.3",
+          category: "Quality",
+          breakdown: "Performance: 8.5, Retention: 8.0, Culture Fit: 8.1",
+          benchmark: "Target: 8.0+"
+        },
+        {
+          metric: "Diversity Ratio",
+          value: "42%",
+          period: "Last 30 days",
+          change: "+5%",
+          category: "Diversity",
+          breakdown: "Gender: 38%, Regional: 28%, Background: 52%",
+          benchmark: "Target: 40%+"
+        }
+      ];
+      return [...baseMetrics, ...enhancedMetrics];
     }
-  ];
+
+    return baseMetrics;
+  };
+
+  const generateApplicationsData = (exportConfig: ExportConfig) => {
+    const baseData = [
+      {
+        applicantName: "Sneha Reddy",
+        jobTitle: "UI/UX Designer",
+        company: "DesignStudio",
+        applicationDate: "2024-08-28",
+        status: "Applied",
+        resumeScore: 87,
+        coverLetterSubmitted: "Yes",
+        skills: "Figma, React, Design Systems"
+      },
+      {
+        applicantName: "Vikash Singh",
+        jobTitle: "DevOps Engineer", 
+        company: "CloudOps",
+        applicationDate: "2024-08-27",
+        status: "Screening",
+        resumeScore: 94,
+        coverLetterSubmitted: "Yes",
+        skills: "Docker, Kubernetes, AWS"
+      }
+    ];
+
+    // Add additional details if requested
+    if (exportConfig.includeDetails) {
+      return baseData.map(applicant => ({
+        ...applicant,
+        phone: "+91 9876543214",
+        college: "BITS Pilani",
+        branch: "Computer Science",
+        graduationYear: 2024,
+        portfolioUrl: "portfolio.dev",
+        expectedSalary: "₹12,00,000",
+        noticePeriod: "Immediate",
+        relocatable: "Yes",
+        interviewPreference: "Virtual"
+      }));
+    }
+
+    return baseData;
+  };
+
+  const generateEventsData = (exportConfig: ExportConfig) => {
+    const baseData = [
+      {
+        eventName: "Tech Giants Hiring Drive 2024",
+        date: "2024-09-15",
+        location: "Main Auditorium",
+        registeredStudents: 156,
+        participatingCompanies: 4,
+        status: "Upcoming",
+        expectedHires: 25
+      },
+      {
+        eventName: "Startup Weekend Recruitment",
+        date: "2024-09-22",
+        location: "Innovation Hub",
+        registeredStudents: 78,
+        participatingCompanies: 4,
+        status: "Upcoming",
+        expectedHires: 15
+      }
+    ];
+
+    // Add additional details if requested
+    if (exportConfig.includeDetails) {
+      return baseData.map(event => ({
+        ...event,
+        organizer: "Career Services",
+        venue: "Main Campus Auditorium",
+        capacity: 200,
+        registrationDeadline: "2024-09-20",
+        eventType: "Hybrid",
+        prerequisites: "Final year students only",
+        coordinator: "Dr. Sarah Johnson",
+        coordinatorEmail: "sarah.j@college.edu",
+        coordinatorPhone: "+91 9876543217"
+      }));
+    }
+
+    return baseData;
+  };
 
   const downloadCSV = (data: any[], filename: string) => {
     if (data.length === 0) return;

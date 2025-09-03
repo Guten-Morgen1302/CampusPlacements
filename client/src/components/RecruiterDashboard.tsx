@@ -35,7 +35,6 @@ import ApplicationViewModal from './ApplicationViewModal';
 import DriveEventManager from './DriveEventManager';
 import ExportReports from './ExportReports';
 import BoothManagement from './BoothManagement';
-import StudentPortalView from './StudentPortalView';
 
 interface RecruiterDashboardProps {
   user: User;
@@ -386,7 +385,6 @@ export default function RecruiterDashboard({ user }: RecruiterDashboardProps) {
             <TabsTrigger value="pipeline">Candidate Pipeline</TabsTrigger>
             <TabsTrigger value="jobs">Job Management</TabsTrigger>
             <TabsTrigger value="booth">Company Booth</TabsTrigger>
-            <TabsTrigger value="student-view">Student Portal View</TabsTrigger>
             <TabsTrigger value="events">Drive & Events</TabsTrigger>
             <TabsTrigger value="analytics">Analytics & Reports</TabsTrigger>
           </TabsList>
@@ -676,9 +674,6 @@ export default function RecruiterDashboard({ user }: RecruiterDashboardProps) {
             <BoothManagement />
           </TabsContent>
 
-          <TabsContent value="student-view" id="student-view" className="space-y-6">
-            <StudentPortalView />
-          </TabsContent>
 
           <TabsContent value="events" className="space-y-6">
             <DriveEventManager />

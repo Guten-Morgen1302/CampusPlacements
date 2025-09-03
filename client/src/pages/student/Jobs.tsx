@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import Navigation from "@/components/Navigation";
 import JobApplicationModal from "@/components/JobApplicationModal";
@@ -224,20 +225,19 @@ function JobCard({ job, onApply, onBookmark, formatSalary, getMatchScoreColor }:
 export default function Jobs() {
   // Always call all hooks in the same order
   const { user, isAuthenticated, isLoading } = useAuth();
-  const [jobs, setJobs] = useState<Job[]>(mockJobs);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>(mockJobs);
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState<JobType | "all">("all");
   const [sortBy, setSortBy] = useState<SortBy>("relevance");
-  const [jobsLoading, setJobsLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
 
-  // Fetch jobs from API
-  const fetchJobs = useCallback(async () => {
-    try {
-      console.log('Fetching jobs...');
+  // Fetch jobs using React Query
+  const { data: jobs = mockJobs, isLoading: jobsLoading } = useQuery<Job[]>({
+    queryKey: ['/api/jobs'],
+    queryFn: async () => {
+      console.log('Fetching jobs with React Query...');
       const response = await fetch('/api/jobs', {
         headers: {
           'Cache-Control': 'no-cache'
@@ -247,50 +247,30 @@ export default function Jobs() {
       
       console.log('Jobs API response:', response.status, response.ok);
       
-      if (response.ok) {
-        const jobsData = await response.json();
-        console.log('Jobs data received:', jobsData.length, 'jobs');
-        const transformedJobs = jobsData.map((job: any) => ({
-          ...job,
-          requirements: job.requirements || [],
-          skills: job.skills || [],
-          matchScore: job.matchPercentage || Math.floor(Math.random() * 40) + 60,
-          postedDate: job.postedDate || new Date(job.createdAt || Date.now()).toLocaleDateString(),
-          applicants: job.applicants || Math.floor(Math.random() * 200) + 10,
-          isBookmarked: false
-        }));
-        setJobs(transformedJobs);
-        setFilteredJobs(transformedJobs);
-        console.log('Jobs state updated with API data');
-      } else {
+      if (!response.ok) {
         console.log('API response not ok, using mock data');
-        setJobs(mockJobs);
-        setFilteredJobs(mockJobs);
+        return mockJobs;
       }
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-      console.log('Using mock data due to error');
-      setJobs(mockJobs);
-      setFilteredJobs(mockJobs);
-    } finally {
-      console.log('Setting jobsLoading to false');
-      setJobsLoading(false);
-    }
-  }, []);
+      
+      const jobsData = await response.json();
+      console.log('Jobs data received:', jobsData.length, 'jobs');
+      const transformedJobs = jobsData.map((job: any) => ({
+        ...job,
+        requirements: job.requirements || [],
+        skills: job.skills || [],
+        matchScore: job.matchPercentage || Math.floor(Math.random() * 40) + 60,
+        postedDate: job.postedDate || new Date(job.createdAt || Date.now()).toLocaleDateString(),
+        applicants: job.applicants || Math.floor(Math.random() * 200) + 10,
+        isBookmarked: false
+      }));
+      console.log('Jobs state updated with API data');
+      return transformedJobs;
+    },
+    staleTime: 0, // Always fresh data
+    refetchOnWindowFocus: true, // Refetch when window gets focus
+    refetchInterval: 30000, // Auto-refresh every 30 seconds
+  });
 
-  // Initial load and periodic refresh
-  useEffect(() => {
-    console.log('Jobs useEffect running - authenticated:', isAuthenticated, 'user role:', user?.role);
-    fetchJobs();
-    
-    // Auto-refresh jobs every 30 seconds
-    const interval = setInterval(fetchJobs, 30000);
-    
-    return () => {
-      console.log('Clearing jobs interval');
-      clearInterval(interval);
-    };
-  }, [fetchJobs]);
 
   // Filter and sort jobs
   useEffect(() => {

@@ -676,7 +676,7 @@ export default function RecruiterDashboard({ user }: RecruiterDashboardProps) {
             <BoothManagement />
           </TabsContent>
 
-          <TabsContent value="student-view" className="space-y-6">
+          <TabsContent value="student-view" id="student-view" className="space-y-6">
             <StudentPortalView />
           </TabsContent>
 

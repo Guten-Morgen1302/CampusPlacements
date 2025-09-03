@@ -108,7 +108,7 @@ export default function StudentDashboard() {
         {/* Statistics Cards */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="glass-card border-neon-cyan/20 hover:border-neon-cyan/40 transition-all duration-300" data-testid="card-resume-score">
+            <Card className="glass-card border-neon-cyan/20 hover:border-neon-cyan/40 transition-all duration-200" data-testid="card-resume-score">
               <CardHeader className="pb-2">
                 <CardTitle className="text-neon-cyan">Resume Score</CardTitle>
               </CardHeader>
@@ -118,7 +118,7 @@ export default function StudentDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="glass-card border-neon-purple/20 hover:border-neon-purple/40 transition-all duration-300" data-testid="card-interview-score">
+            <Card className="glass-card border-neon-purple/20 hover:border-neon-purple/40 transition-all duration-200" data-testid="card-interview-score">
               <CardHeader className="pb-2">
                 <CardTitle className="text-neon-purple">Interview Readiness</CardTitle>
               </CardHeader>
@@ -128,7 +128,7 @@ export default function StudentDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="glass-card border-neon-pink/20 hover:border-neon-pink/40 transition-all duration-300" data-testid="card-learning-streak">
+            <Card className="glass-card border-neon-pink/20 hover:border-neon-pink/40 transition-all duration-200" data-testid="card-learning-streak">
               <CardHeader className="pb-2">
                 <CardTitle className="text-neon-pink">Learning Streak</CardTitle>
               </CardHeader>
@@ -138,7 +138,7 @@ export default function StudentDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="glass-card border-neon-green/20 hover:border-neon-green/40 transition-all duration-300" data-testid="card-applications">
+            <Card className="glass-card border-neon-green/20 hover:border-neon-green/40 transition-all duration-200" data-testid="card-applications">
               <CardHeader className="pb-2">
                 <CardTitle className="text-neon-green">Applications</CardTitle>
               </CardHeader>
@@ -155,9 +155,9 @@ export default function StudentDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
               {quickActions.map((action, index) => (
                 <Link key={index} href={action.href}>
-                  <Card className={`glass-card ${action.colorClass} transition-all duration-300 cursor-pointer group h-full`} data-testid={`action-${action.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <Card className={`glass-card ${action.colorClass} transition-all duration-200 cursor-pointer group h-full`} data-testid={`action-${action.title.toLowerCase().replace(/\s+/g, '-')}`}>
                     <CardHeader>
-                      <action.icon className={`h-8 w-8 ${action.iconClass} group-hover:scale-110 transition-transform duration-300`} />
+                      <action.icon className={`h-8 w-8 ${action.iconClass} group-hover:scale-105 transition-transform duration-200`} />
                       <CardTitle className="text-lg">{action.title}</CardTitle>
                       <CardDescription>{action.description}</CardDescription>
                     </CardHeader>

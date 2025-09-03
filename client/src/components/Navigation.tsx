@@ -71,18 +71,11 @@ export default function Navigation({ user }: NavigationProps) {
     ] : []),
     ...(user.role === 'admin' ? [
       { id: 'admin', label: 'Admin Overview', action: () => scrollToSection('admin') },
-      { id: 'dashboard', label: 'Student View', action: () => scrollToSection('dashboard') },
-      { id: 'recruiter', label: 'Recruiter View', action: () => scrollToSection('recruiter') },
-      { id: 'job-fair', label: 'Job Fair', action: () => scrollToSection('job-fair') },
     ] : []),
   ], [user.role]);
 
   // Memoize cross-role navigation links
   const roleNavigationItems = useMemo(() => [
-    ...(user.role === 'admin' ? [
-      { id: 'student', label: 'Student Portal', icon: GraduationCap, action: () => navigateToPage('/student') },
-      { id: 'recruiter-portal', label: 'Recruiter Portal', icon: Building2, action: () => navigateToPage('/recruiter') }
-    ] : []),
     ...(user.role === 'recruiter' ? [] : []),
   ], [user.role]);
 

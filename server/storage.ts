@@ -149,7 +149,7 @@ export class DatabaseStorage implements IStorage {
   async createStudentProfile(profile: InsertStudentProfile): Promise<StudentProfile> {
     const [studentProfile] = await db
       .insert(studentProfiles)
-      .values([profile])
+      .values(profile as any)
       .returning();
     return studentProfile;
   }
@@ -191,7 +191,7 @@ export class DatabaseStorage implements IStorage {
   async createJob(job: InsertJob): Promise<Job> {
     const [newJob] = await db
       .insert(jobs)
-      .values([job])
+      .values(job as any)
       .returning();
     return newJob;
   }
@@ -324,7 +324,7 @@ export class DatabaseStorage implements IStorage {
   async createInterviewSession(session: InsertInterviewSession): Promise<InterviewSession> {
     const [newSession] = await db
       .insert(interviewSessions)
-      .values([session])
+      .values(session as any)
       .returning();
     return newSession;
   }
@@ -340,7 +340,7 @@ export class DatabaseStorage implements IStorage {
   async createResumeAnalysis(analysis: InsertResumeAnalysis): Promise<ResumeAnalysis> {
     const [newAnalysis] = await db
       .insert(resumeAnalyses)
-      .values([analysis])
+      .values(analysis as any)
       .returning();
     return newAnalysis;
   }
@@ -358,7 +358,7 @@ export class DatabaseStorage implements IStorage {
   async createChatMessage(message: InsertChatMessage): Promise<ChatMessage> {
     const [newMessage] = await db
       .insert(chatMessages)
-      .values([message])
+      .values(message)
       .returning();
     return newMessage;
   }

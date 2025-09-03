@@ -535,14 +535,17 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-cyan-500/10 border-cyan-500/20">
                       <h3 className="font-semibold text-cyan-300 mb-2">Role Management</h3>
                       <p className="text-sm text-muted-foreground mb-3">Create/edit/delete users, change roles</p>
-                      <Button 
-                        size="sm" 
-                        className="w-full neon-button" 
-                        onClick={() => setUserModalOpen(true)}
+                      <button 
+                        className="w-full px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 cursor-pointer"
+                        onClick={() => {
+                          console.log("BUTTON CLICKED!");
+                          alert("Button works!");
+                          setUserModalOpen(true);
+                        }}
                         data-testid="button-manage-roles"
                       >
                         Manage Roles
-                      </Button>
+                      </button>
                       <Dialog open={userModalOpen} onOpenChange={setUserModalOpen}>
                         <DialogContent className="glass-card max-w-md">
                           <DialogHeader>
@@ -598,14 +601,17 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-purple-500/10 border-purple-500/20">
                       <h3 className="font-semibold text-purple-300 mb-2">Bulk Operations</h3>
                       <p className="text-sm text-muted-foreground mb-3">Import students from CSV, mass changes</p>
-                      <Button 
-                        size="sm" 
-                        className="w-full neon-button" 
-                        onClick={() => setBulkModalOpen(true)}
+                      <button 
+                        className="w-full px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 cursor-pointer"
+                        onClick={() => {
+                          console.log("BULK BUTTON CLICKED!");
+                          alert("Bulk button works!");
+                          setBulkModalOpen(true);
+                        }}
                         data-testid="button-bulk-operations"
                       >
                         Bulk Actions
-                      </Button>
+                      </button>
                       <Dialog open={bulkModalOpen} onOpenChange={setBulkModalOpen}>
                         <DialogContent className="glass-card max-w-lg">
                           <DialogHeader>
@@ -692,14 +698,17 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-orange-500/10 border-orange-500/20">
                       <h3 className="font-semibold text-orange-300 mb-2">Activity Monitoring</h3>
                       <p className="text-sm text-muted-foreground mb-3">Track login patterns, inactive accounts</p>
-                      <Button 
-                        size="sm" 
-                        className="w-full neon-button" 
-                        onClick={() => setActivityModalOpen(true)}
+                      <button 
+                        className="w-full px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 cursor-pointer"
+                        onClick={() => {
+                          console.log("ACTIVITY BUTTON CLICKED!");
+                          alert("Activity button works!");
+                          setActivityModalOpen(true);
+                        }}
                         data-testid="button-activity-monitor"
                       >
                         View Activity
-                      </Button>
+                      </button>
                       <Dialog open={activityModalOpen} onOpenChange={setActivityModalOpen}>
                         <DialogContent className="glass-card max-w-2xl">
                           <DialogHeader>
@@ -773,14 +782,17 @@ export default function AdminDashboard() {
                     <Card className="p-4 bg-green-500/10 border-green-500/20">
                       <h3 className="font-semibold text-green-300 mb-2">Account Verification</h3>
                       <p className="text-sm text-muted-foreground mb-3">Approve/reject recruiter registrations</p>
-                      <Button 
-                        size="sm" 
-                        className="w-full neon-button" 
-                        onClick={() => setVerificationModalOpen(true)}
+                      <button 
+                        className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer"
+                        onClick={() => {
+                          console.log("VERIFY BUTTON CLICKED!");
+                          alert("Verify button works!");
+                          setVerificationModalOpen(true);
+                        }}
                         data-testid="button-verify-accounts"
                       >
                         Verify Accounts
-                      </Button>
+                      </button>
                       <Dialog open={verificationModalOpen} onOpenChange={setVerificationModalOpen}>
                         <DialogContent className="glass-card max-w-2xl">
                           <DialogHeader>

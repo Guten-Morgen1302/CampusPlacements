@@ -314,6 +314,57 @@ export default function AdminDashboard() {
             >
               🔥 CLICK ME TO TEST 🔥
             </button>
+            
+            {/* TEST: Move the problematic buttons here to see if location is the issue */}
+            <div style={{display: 'flex', gap: '10px', justifyContent: 'center', margin: '20px 0'}}>
+              <button 
+                className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 cursor-pointer"
+                onClick={() => {
+                  console.log("MANAGE ROLES CLICKED!");
+                  alert("Manage Roles works!");
+                  setUserModalOpen(true);
+                }}
+                style={{zIndex: 9999}}
+              >
+                TEST Manage Roles
+              </button>
+              
+              <button 
+                className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 cursor-pointer"
+                onClick={() => {
+                  console.log("BULK ACTIONS CLICKED!");
+                  alert("Bulk Actions works!");
+                  setBulkModalOpen(true);
+                }}
+                style={{zIndex: 9999}}
+              >
+                TEST Bulk Actions
+              </button>
+              
+              <button 
+                className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 cursor-pointer"
+                onClick={() => {
+                  console.log("VIEW ACTIVITY CLICKED!");
+                  alert("View Activity works!");
+                  setActivityModalOpen(true);
+                }}
+                style={{zIndex: 9999}}
+              >
+                TEST View Activity
+              </button>
+              
+              <button 
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 cursor-pointer"
+                onClick={() => {
+                  console.log("VERIFY ACCOUNTS CLICKED!");
+                  alert("Verify Accounts works!");
+                  setVerificationModalOpen(true);
+                }}
+                style={{zIndex: 9999}}
+              >
+                TEST Verify Accounts
+              </button>
+            </div>
           </div>
 
           {/* Overview Stats - Keep as shown in image */}

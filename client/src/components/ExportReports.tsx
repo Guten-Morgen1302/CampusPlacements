@@ -413,15 +413,21 @@ export default function ExportReports() {
             return (
               <motion.div
                 key={type.value}
-                className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                className={`p-4 rounded-lg border cursor-pointer transition-all pointer-events-auto relative z-10 ${
                   config.reportType === type.value
-                    ? 'border-neon-cyan bg-neon-cyan/10'
-                    : 'border-border/20 hover:border-neon-cyan/30'
+                    ? 'border-neon-cyan bg-neon-cyan/10 shadow-lg shadow-neon-cyan/20'
+                    : 'border-border/20 hover:border-neon-cyan/30 hover:bg-neon-cyan/5'
                 }`}
-                onClick={() => setConfig(prev => ({ ...prev, reportType: type.value as any }))}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Report type clicked:', type.value);
+                  setConfig(prev => ({ ...prev, reportType: type.value as any }));
+                }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 data-testid={`report-type-${type.value}`}
+                style={{ pointerEvents: 'auto' }}
               >
                 <div className="flex items-center space-x-3">
                   <Icon className="h-5 w-5 text-neon-cyan" />
@@ -473,25 +479,35 @@ export default function ExportReports() {
         <div className="space-y-3">
           <Label className="text-sm font-medium">Include Additional Data</Label>
           <div className="space-y-2">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 cursor-pointer hover:bg-neon-cyan/5 p-2 rounded-md transition-colors"
+                 onClick={() => setConfig(prev => ({ ...prev, includeDetails: !prev.includeDetails }))}>
               <Checkbox
                 id="includeDetails"
                 checked={config.includeDetails}
-                onCheckedChange={(checked) => setConfig(prev => ({ ...prev, includeDetails: !!checked }))}
+                onCheckedChange={(checked) => {
+                  console.log('Include details checkbox clicked:', checked);
+                  setConfig(prev => ({ ...prev, includeDetails: !!checked }));
+                }}
                 data-testid="checkbox-include-details"
+                className="pointer-events-auto"
               />
-              <Label htmlFor="includeDetails" className="text-sm">
+              <Label htmlFor="includeDetails" className="text-sm cursor-pointer">
                 Include detailed candidate information
               </Label>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 cursor-pointer hover:bg-neon-cyan/5 p-2 rounded-md transition-colors"
+                 onClick={() => setConfig(prev => ({ ...prev, includeMetrics: !prev.includeMetrics }))}>
               <Checkbox
                 id="includeMetrics"
                 checked={config.includeMetrics}
-                onCheckedChange={(checked) => setConfig(prev => ({ ...prev, includeMetrics: !!checked }))}
+                onCheckedChange={(checked) => {
+                  console.log('Include metrics checkbox clicked:', checked);
+                  setConfig(prev => ({ ...prev, includeMetrics: !!checked }));
+                }}
                 data-testid="checkbox-include-metrics"
+                className="pointer-events-auto"
               />
-              <Label htmlFor="includeMetrics" className="text-sm">
+              <Label htmlFor="includeMetrics" className="text-sm cursor-pointer">
                 Include performance metrics and analytics
               </Label>
             </div>

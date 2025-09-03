@@ -38,7 +38,7 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState({ email: "", newRole: "" });
   const [bulkEmails, setBulkEmails] = useState("");
   const [bulkAction, setBulkAction] = useState("role_change");
-  const [csvFile, setCsvFile] = useState(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   
   const [users, setUsers] = useState([
     { id: "1", name: "John Doe", email: "john@example.com", role: "student", status: "active", lastLogin: "2025-01-01T10:30:00", createdAt: "2024-09-01" },
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
     setUserModalOpen(false);
   };
   
-  const handleDeleteUser = (userEmail) => {
+  const handleDeleteUser = (userEmail: string) => {
     setUsers(users.filter(u => u.email !== userEmail));
     setUserActivity([{
       id: Date.now().toString(),
@@ -214,7 +214,7 @@ export default function AdminDashboard() {
     setCsvFile(null);
   };
   
-  const handleApproveRecruiter = (recruiterId) => {
+  const handleApproveRecruiter = (recruiterId: string) => {
     const recruiter = pendingRecruiters.find(r => r.id === recruiterId);
     if (recruiter) {
       // Add to users list
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
     }
   };
   
-  const handleRejectRecruiter = (recruiterId) => {
+  const handleRejectRecruiter = (recruiterId: string) => {
     const recruiter = pendingRecruiters.find(r => r.id === recruiterId);
     if (recruiter) {
       setPendingRecruiters(pendingRecruiters.filter(r => r.id !== recruiterId));
@@ -628,7 +628,7 @@ export default function AdminDashboard() {
                                   type="file" 
                                   accept=".csv" 
                                   className="glass-input" 
-                                  onChange={(e) => setCsvFile(e.target.files[0])}
+                                  onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
                                 />
                                 <p className="text-xs text-muted-foreground mt-1">
                                   Format: email,firstName,lastName,role

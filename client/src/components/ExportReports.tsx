@@ -666,44 +666,362 @@ export default function ExportReports() {
   };
 
   const downloadPDF = (data: any[], reportType: string, filename: string) => {
-    // Create a simple HTML report that can be printed as PDF
+    // Create a FIRE cyberpunk-themed HTML report that'll impress the judges! 🔥
+    const reportTypeDisplay = {
+      'shortlist': 'Shortlisted Candidates',
+      'analytics': 'Recruitment Analytics', 
+      'applications': 'Job Applications',
+      'events': 'Drive Events'
+    }[reportType] || reportType;
+
     const htmlContent = `
       <!DOCTYPE html>
       <html>
         <head>
-          <title>${reportType.charAt(0).toUpperCase() + reportType.slice(1)} Report</title>
+          <title>${reportTypeDisplay} - PlaceNet Report</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .title { color: #00fff9; font-size: 24px; font-weight: bold; }
-            .subtitle { color: #666; margin-top: 5px; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; font-weight: bold; }
-            .footer { margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
+            @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+            
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            
+            body { 
+              font-family: 'Inter', sans-serif;
+              background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+              color: #ffffff;
+              line-height: 1.6;
+              min-height: 100vh;
+              position: relative;
+              overflow-x: auto;
+            }
+            
+            /* Animated background pattern */
+            body::before {
+              content: '';
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 249, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 0, 110, 0.1) 0%, transparent 50%);
+              z-index: -1;
+            }
+            
+            .container {
+              max-width: 1200px;
+              margin: 0 auto;
+              padding: 40px 20px;
+              position: relative;
+              z-index: 1;
+            }
+            
+            /* Epic Header */
+            .header {
+              text-align: center;
+              margin-bottom: 50px;
+              position: relative;
+              padding: 40px 20px;
+              background: rgba(255, 255, 255, 0.05);
+              backdrop-filter: blur(20px);
+              border: 1px solid rgba(0, 255, 249, 0.3);
+              border-radius: 20px;
+              box-shadow: 
+                0 0 40px rgba(0, 255, 249, 0.2),
+                inset 0 0 40px rgba(255, 255, 255, 0.05);
+            }
+            
+            .header::before {
+              content: '';
+              position: absolute;
+              top: -2px;
+              left: -2px;
+              right: -2px;
+              bottom: -2px;
+              background: linear-gradient(45deg, #00fff9, #8b5cf6, #ff006e, #00fff9);
+              border-radius: 22px;
+              z-index: -1;
+              animation: borderGlow 3s linear infinite;
+            }
+            
+            @keyframes borderGlow {
+              0%, 100% { opacity: 0.5; }
+              50% { opacity: 1; }
+            }
+            
+            .logo {
+              font-family: 'Orbitron', monospace;
+              font-size: 32px;
+              font-weight: 900;
+              background: linear-gradient(45deg, #00fff9, #8b5cf6, #ff006e);
+              background-size: 200% 200%;
+              -webkit-background-clip: text;
+              background-clip: text;
+              -webkit-text-fill-color: transparent;
+              animation: gradientShift 3s ease-in-out infinite;
+              margin-bottom: 10px;
+            }
+            
+            @keyframes gradientShift {
+              0%, 100% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+            }
+            
+            .title {
+              font-family: 'Orbitron', monospace;
+              font-size: 28px;
+              font-weight: 700;
+              color: #00fff9;
+              text-shadow: 0 0 20px rgba(0, 255, 249, 0.5);
+              margin-bottom: 15px;
+            }
+            
+            .subtitle {
+              color: rgba(255, 255, 255, 0.8);
+              font-size: 16px;
+              font-weight: 300;
+            }
+            
+            .stats-bar {
+              display: flex;
+              justify-content: center;
+              gap: 40px;
+              margin-top: 20px;
+              flex-wrap: wrap;
+            }
+            
+            .stat-item {
+              text-align: center;
+              padding: 15px 25px;
+              background: rgba(0, 255, 249, 0.1);
+              border: 1px solid rgba(0, 255, 249, 0.3);
+              border-radius: 12px;
+              backdrop-filter: blur(10px);
+            }
+            
+            .stat-number {
+              font-size: 24px;
+              font-weight: 700;
+              color: #00fff9;
+              display: block;
+            }
+            
+            .stat-label {
+              font-size: 12px;
+              color: rgba(255, 255, 255, 0.7);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            }
+            
+            /* Sick Table Styling */
+            .table-container {
+              background: rgba(255, 255, 255, 0.03);
+              backdrop-filter: blur(20px);
+              border: 1px solid rgba(0, 255, 249, 0.2);
+              border-radius: 16px;
+              overflow: hidden;
+              box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+              margin-bottom: 40px;
+            }
+            
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              font-size: 14px;
+            }
+            
+            th {
+              background: linear-gradient(135deg, rgba(0, 255, 249, 0.2), rgba(139, 92, 246, 0.2));
+              color: #ffffff;
+              font-weight: 600;
+              padding: 20px 15px;
+              text-align: left;
+              font-family: 'Orbitron', monospace;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              font-size: 12px;
+              border-bottom: 2px solid rgba(0, 255, 249, 0.3);
+              position: relative;
+            }
+            
+            th::after {
+              content: '';
+              position: absolute;
+              bottom: 0;
+              left: 0;
+              width: 100%;
+              height: 2px;
+              background: linear-gradient(90deg, transparent, #00fff9, transparent);
+            }
+            
+            td {
+              padding: 16px 15px;
+              border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+              color: rgba(255, 255, 255, 0.9);
+              vertical-align: top;
+              word-wrap: break-word;
+              max-width: 200px;
+            }
+            
+            tr:nth-child(even) {
+              background: rgba(0, 255, 249, 0.03);
+            }
+            
+            tr:hover {
+              background: rgba(0, 255, 249, 0.08);
+              transform: scale(1.01);
+              transition: all 0.3s ease;
+            }
+            
+            /* Special styling for different data types */
+            .status-active { 
+              color: #00ff88; 
+              font-weight: 600;
+              text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+            }
+            .status-pending { 
+              color: #ffaa00; 
+              font-weight: 600;
+              text-shadow: 0 0 10px rgba(255, 170, 0, 0.3);
+            }
+            .status-inactive { 
+              color: #ff4444; 
+              font-weight: 600;
+              text-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+            }
+            
+            .percentage {
+              font-weight: 700;
+              color: #00fff9;
+            }
+            
+            .email {
+              color: #8b5cf6;
+              font-family: 'Courier New', monospace;
+            }
+            
+            .skill-tag {
+              background: rgba(139, 92, 246, 0.2);
+              padding: 4px 8px;
+              border-radius: 6px;
+              font-size: 11px;
+              margin: 2px;
+              display: inline-block;
+              border: 1px solid rgba(139, 92, 246, 0.3);
+            }
+            
+            /* Epic Footer */
+            .footer {
+              margin-top: 60px;
+              text-align: center;
+              padding: 30px;
+              background: rgba(255, 255, 255, 0.05);
+              backdrop-filter: blur(20px);
+              border: 1px solid rgba(0, 255, 249, 0.2);
+              border-radius: 16px;
+              position: relative;
+            }
+            
+            .footer::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 2px;
+              background: linear-gradient(90deg, transparent, #00fff9, #8b5cf6, #ff006e, transparent);
+            }
+            
+            .footer-text {
+              color: rgba(255, 255, 255, 0.7);
+              font-size: 14px;
+              margin-bottom: 10px;
+            }
+            
+            .powered-by {
+              font-family: 'Orbitron', monospace;
+              color: #00fff9;
+              font-weight: 700;
+              text-shadow: 0 0 15px rgba(0, 255, 249, 0.5);
+            }
+            
+            /* Print optimizations */
+            @media print {
+              body { background: #000014; -webkit-print-color-adjust: exact; }
+              .table-container { page-break-inside: avoid; }
+              tr { page-break-inside: avoid; }
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <div class="title">PlaceNet - ${reportType.charAt(0).toUpperCase() + reportType.slice(1)} Report</div>
-            <div class="subtitle">Generated on ${new Date().toLocaleString()}</div>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                ${Object.keys(data[0] || {}).map(key => `<th>${key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</th>`).join('')}
-              </tr>
-            </thead>
-            <tbody>
-              ${data.map(row => `
-                <tr>
-                  ${Object.values(row).map(value => `<td>${value}</td>`).join('')}
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-          <div class="footer">
-            This report was generated by PlaceNet Training & Placement Cell Platform
+          <div class="container">
+            <div class="header">
+              <div class="logo">PLACENET</div>
+              <div class="title">${reportTypeDisplay} Report</div>
+              <div class="subtitle">Generated on ${new Date().toLocaleString()}</div>
+              <div class="stats-bar">
+                <div class="stat-item">
+                  <span class="stat-number">${data.length}</span>
+                  <span class="stat-label">Records</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">${Object.keys(data[0] || {}).length}</span>
+                  <span class="stat-label">Fields</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number">${new Date().getFullYear()}</span>
+                  <span class="stat-label">Academic Year</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    ${Object.keys(data[0] || {}).map(key => `<th>${key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</th>`).join('')}
+                  </tr>
+                </thead>
+                <tbody>
+                  ${data.map(row => `
+                    <tr>
+                      ${Object.entries(row).map(([key, value]) => {
+                        let cellClass = '';
+                        let displayValue = value;
+                        
+                        // Add special styling based on content
+                        if (key.toLowerCase().includes('status')) {
+                          if (String(value).toLowerCase().includes('active') || String(value).toLowerCase().includes('scheduled') || String(value).toLowerCase().includes('shortlisted')) {
+                            cellClass = 'status-active';
+                          } else if (String(value).toLowerCase().includes('pending') || String(value).toLowerCase().includes('applied')) {
+                            cellClass = 'status-pending';
+                          } else {
+                            cellClass = 'status-inactive';
+                          }
+                        } else if (key.toLowerCase().includes('percentage') || key.toLowerCase().includes('match')) {
+                          cellClass = 'percentage';
+                        } else if (key.toLowerCase().includes('email')) {
+                          cellClass = 'email';
+                        } else if (key.toLowerCase().includes('skills')) {
+                          displayValue = String(value).split(',').map(skill => `<span class="skill-tag">${skill.trim()}</span>`).join(' ');
+                        }
+                        
+                        return `<td class="${cellClass}">${displayValue}</td>`;
+                      }).join('')}
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="footer">
+              <div class="footer-text">This report was generated by</div>
+              <div class="powered-by">PlaceNet Training & Placement Cell Platform</div>
+              <div style="margin-top: 15px; color: rgba(255,255,255,0.5); font-size: 12px;">
+                🚀 Powered by Next-Gen Recruitment Technology
+              </div>
+            </div>
           </div>
         </body>
       </html>

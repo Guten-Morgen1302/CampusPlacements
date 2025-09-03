@@ -3,7 +3,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import RecruiterDashboard from "@/components/RecruiterDashboard";
-import VirtualJobFair from "@/components/VirtualJobFair";
 import { isUnauthorizedError } from "@/lib/authUtils";
 
 export default function RecruiterPage() {
@@ -57,7 +56,6 @@ export default function RecruiterPage() {
       
       <main className="pt-20 pb-10">
         <RecruiterDashboard user={user} />
-        <VirtualJobFair />
       </main>
 
       {/* Footer */}

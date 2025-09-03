@@ -31,9 +31,9 @@ function setupSimpleAuth(app: Express) {
     const pgStore = connectPg(session);
     sessionStore = new pgStore({
       conString: process.env.DATABASE_URL,
-      createTableIfMissing: true, // Create table if missing
+      createTableIfMissing: false, // Don't create table, we already have it via Drizzle
       ttl: sessionTtl,
-      tableName: "user_sessions",
+      tableName: "sessions", // Use existing Drizzle table
       pruneSessionInterval: false, // Disable auto-pruning to avoid index conflicts
       disableTouch: true, // Prevent session touch to avoid conflicts
     });

@@ -1064,6 +1064,226 @@ Be honest and constructive in your feedback.`;
     }
   });
 
+  // Student Portal View for Recruiters
+  app.get('/api/recruiter/students', isAuthenticated, async (req: any, res) => {
+    try {
+      // Add cache for performance
+      res.set('Cache-Control', 'public, max-age=300'); // 5 minutes cache
+      
+      // Mock student data with realistic profiles
+      const students = [
+        {
+          id: "student-1756906550162",
+          firstName: "Harsha",
+          lastName: "Patil",
+          email: "harshabhaypatil@gmail.com",
+          profileImageUrl: null,
+          studentProfile: {
+            college: "IIT Bombay",
+            degree: "B.Tech",
+            branch: "Computer Science",
+            graduationYear: 2024,
+            cgpa: 8.7,
+            skills: ["React", "Node.js", "TypeScript", "MongoDB", "GraphQL", "AWS"],
+            resumeScore: 87,
+            interviewScore: 82,
+            learningStreak: 45
+          },
+          skillMatch: 92,
+          applications: [
+            {
+              id: "app-1",
+              jobTitle: "Full Stack Developer",
+              company: "Google",
+              status: "applied",
+              appliedAt: "2025-09-03T10:00:00Z"
+            }
+          ]
+        },
+        {
+          id: "student-002",
+          firstName: "Ravi",
+          lastName: "Kumar",
+          email: "ravi.kumar.dev@gmail.com",
+          profileImageUrl: null,
+          studentProfile: {
+            college: "NIT Warangal",
+            degree: "B.Tech",
+            branch: "Software Engineering",
+            graduationYear: 2024,
+            cgpa: 8.2,
+            skills: ["Python", "Django", "React", "PostgreSQL", "Docker", "Kubernetes"],
+            resumeScore: 78,
+            interviewScore: 75,
+            learningStreak: 32
+          },
+          skillMatch: 85,
+          applications: [
+            {
+              id: "app-2",
+              jobTitle: "Backend Developer",
+              company: "Microsoft",
+              status: "interview",
+              appliedAt: "2025-09-02T14:30:00Z"
+            }
+          ]
+        },
+        {
+          id: "student-003",
+          firstName: "Ananya",
+          lastName: "Singh",
+          email: "ananya.singh2024@outlook.com",
+          profileImageUrl: null,
+          studentProfile: {
+            college: "IIIT Hyderabad",
+            degree: "B.Tech",
+            branch: "Computer Science",
+            graduationYear: 2025,
+            cgpa: 9.1,
+            skills: ["JavaScript", "React", "Vue.js", "Node.js", "Express", "MySQL"],
+            resumeScore: 91,
+            interviewScore: 89,
+            learningStreak: 67
+          },
+          skillMatch: 94,
+          applications: [
+            {
+              id: "app-3",
+              jobTitle: "Frontend Developer",
+              company: "Netflix",
+              status: "hired",
+              appliedAt: "2025-08-30T09:15:00Z"
+            }
+          ]
+        },
+        {
+          id: "student-004",
+          firstName: "Arjun",
+          lastName: "Reddy",
+          email: "arjun.reddy.cs@gmail.com",
+          profileImageUrl: null,
+          studentProfile: {
+            college: "VIT Vellore",
+            degree: "B.Tech",
+            branch: "Information Technology",
+            graduationYear: 2024,
+            cgpa: 7.8,
+            skills: ["Java", "Spring Boot", "Angular", "Jenkins", "Git", "Agile"],
+            resumeScore: 72,
+            interviewScore: 68,
+            learningStreak: 23
+          },
+          skillMatch: 78,
+          applications: [
+            {
+              id: "app-4",
+              jobTitle: "Java Developer",
+              company: "Infosys",
+              status: "screening",
+              appliedAt: "2025-09-01T16:45:00Z"
+            }
+          ]
+        },
+        {
+          id: "student-005",
+          firstName: "Kavya",
+          lastName: "Nair",
+          email: "kavya.nair.tech@gmail.com",
+          profileImageUrl: null,
+          studentProfile: {
+            college: "Anna University",
+            degree: "B.E",
+            branch: "Computer Science",
+            graduationYear: 2024,
+            cgpa: 8.5,
+            skills: ["Python", "Machine Learning", "TensorFlow", "Flask", "Pandas", "NumPy"],
+            resumeScore: 84,
+            interviewScore: 80,
+            learningStreak: 38
+          },
+          skillMatch: 88,
+          applications: [
+            {
+              id: "app-5",
+              jobTitle: "ML Engineer",
+              company: "Amazon",
+              status: "applied",
+              appliedAt: "2025-09-03T08:20:00Z"
+            }
+          ]
+        },
+        {
+          id: "student-006",
+          firstName: "Siddharth",
+          lastName: "Gupta",
+          email: "siddharth.gupta.dev@outlook.com",
+          profileImageUrl: null,
+          studentProfile: {
+            college: "DTU Delhi",
+            degree: "B.Tech",
+            branch: "Computer Science",
+            graduationYear: 2025,
+            cgpa: 8.9,
+            skills: ["React Native", "Flutter", "Dart", "Firebase", "MongoDB", "REST API"],
+            resumeScore: 89,
+            interviewScore: 85,
+            learningStreak: 52
+          },
+          skillMatch: 91,
+          applications: [
+            {
+              id: "app-6",
+              jobTitle: "Mobile Developer",
+              company: "Uber",
+              status: "interview",
+              appliedAt: "2025-08-31T12:10:00Z"
+            }
+          ]
+        }
+      ];
+      
+      res.json(students);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+      res.status(500).json({ message: "Failed to fetch students" });
+    }
+  });
+
+  // Send feedback to students
+  app.post('/api/recruiter/feedback', isAuthenticated, async (req: any, res) => {
+    try {
+      const recruiterId = req.user.id;
+      const { studentId, message, type } = req.body;
+      
+      if (!studentId || !message || !type) {
+        return res.status(400).json({ message: "Student ID, message, and type are required" });
+      }
+      
+      // Mock feedback storage (in a real app, this would go to database)
+      const feedback = {
+        id: `feedback-${Date.now()}`,
+        studentId,
+        recruiterId,
+        message,
+        type,
+        timestamp: new Date().toISOString(),
+        status: 'sent'
+      };
+      
+      console.log(`Feedback sent from recruiter ${recruiterId} to student ${studentId}: ${type} - ${message}`);
+      
+      // In a real implementation, this would:
+      // 1. Store feedback in database
+      // 2. Send notification to student
+      // 3. Add to student's notification feed
+      
+      res.json(feedback);
+    } catch (error) {
+      console.error("Error sending feedback:", error);
+      res.status(500).json({ message: "Failed to send feedback" });
+    }
+  });
+
   // Chat Routes
   app.post('/api/chat/messages', isAuthenticated, async (req: any, res) => {
     try {

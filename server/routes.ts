@@ -677,8 +677,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all applications for a recruiter (across all their jobs)
   app.get('/api/recruiter/applications', isAuthenticated, async (req: any, res) => {
     try {
-      // Add cache for faster loading
-      res.set('Cache-Control', 'public, max-age=180'); // 3 minutes cache
+      // No caching for real-time application updates
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
       
       const userId = req.user.id;
       const realApplications = await storage.getApplicationsByRecruiter(userId);

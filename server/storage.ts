@@ -249,7 +249,7 @@ export class DatabaseStorage implements IStorage {
   async createApplication(application: InsertApplication): Promise<Application> {
     const [newApplication] = await db
       .insert(applications)
-      .values([application])
+      .values(application as any)
       .returning();
     return newApplication;
   }

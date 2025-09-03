@@ -148,17 +148,20 @@ export default function RecruiterDashboard({ user }: RecruiterDashboardProps) {
         variant: "destructive",
       });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Job Deleted",
         description: "Job posting has been successfully deleted.",
       });
-      // Invalidate to make sure we're in sync with server
-      queryClient.invalidateQueries({ queryKey: ['/api/jobs'] });
+      
+      // Force hard refresh of all job-related caches
+      await queryClient.invalidateQueries({ queryKey: ['/api/jobs'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/recruiter/jobs'] });
     },
-    onSettled: () => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['/api/recruiter/jobs'] });
+    onSettled: async () => {
+      // Always do a hard refetch to ensure UI is in sync with database
+      await queryClient.invalidateQueries({ queryKey: ['/api/recruiter/jobs'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/recruiter/jobs'] });
     }
   });
 

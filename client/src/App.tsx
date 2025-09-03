@@ -60,7 +60,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="cyberpunk-bg"></div>
-        <ParticleSystem />
+        {/* <ParticleSystem /> */}
         <Toaster />
         <Router />
       </TooltipProvider>

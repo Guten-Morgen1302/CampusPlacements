@@ -306,6 +306,14 @@ export default function AdminDashboard() {
             <p className="text-xl text-muted-foreground">
               Manage the entire PlaceNet ecosystem
             </p>
+            
+            {/* DEBUG TEST BUTTON */}
+            <button 
+              onClick={() => alert('TEST BUTTON WORKS!')} 
+              style={{background: 'red', color: 'white', padding: '10px', margin: '10px', fontSize: '16px', cursor: 'pointer'}}
+            >
+              🔥 CLICK ME TO TEST 🔥
+            </button>
           </div>
 
           {/* Overview Stats - Keep as shown in image */}

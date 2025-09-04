@@ -12,9 +12,9 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('neon.tech') ? {
+  ssl: process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('neon.tech') || process.env.DATABASE_URL?.includes('amazonaws.com') ? {
     rejectUnauthorized: false
-  } : false, // Enable SSL for Neon and production environments
+  } : false, // Enable SSL for cloud databases, disable for localhost
 });
 
 export const db = drizzle(pool, { schema });

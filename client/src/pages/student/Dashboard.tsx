@@ -154,7 +154,7 @@ export default function StudentDashboard() {
           {/* Quick Actions */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-neon-cyan mb-6 font-orbitron">Quick Actions</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-8 gap-4">
               {quickActions.map((action, index) => (
                 <Link key={index} href={action.href}>
                   <Card className={`glass-card ${action.colorClass} transition-all duration-200 cursor-pointer group h-full`} data-testid={`action-${action.title.toLowerCase().replace(/\s+/g, '-')}`}>

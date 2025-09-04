@@ -8,25 +8,28 @@ interface PageTransitionProps {
 const pageVariants = {
   initial: {
     opacity: 0,
-    x: 20,
-    scale: 0.98
+    y: 30,
+    filter: "blur(10px)",
+    scale: 0.95
   },
   in: {
     opacity: 1,
-    x: 0,
+    y: 0,
+    filter: "blur(0px)",
     scale: 1
   },
   out: {
     opacity: 0,
-    x: -20,
-    scale: 0.98
+    y: -30,
+    filter: "blur(10px)",
+    scale: 0.95
   }
 };
 
 const pageTransition = {
   type: "tween",
-  ease: "anticipate",
-  duration: 0.4
+  ease: [0.25, 0.46, 0.45, 0.94],
+  duration: 0.6
 };
 
 export default function PageTransition({ children }: PageTransitionProps) {
@@ -37,7 +40,11 @@ export default function PageTransition({ children }: PageTransitionProps) {
       exit="out"
       variants={pageVariants}
       transition={pageTransition}
-      className="w-full h-full"
+      className="w-full min-h-screen"
+      style={{
+        transformOrigin: "center",
+        willChange: "transform, opacity, filter"
+      }}
     >
       {children}
     </motion.div>

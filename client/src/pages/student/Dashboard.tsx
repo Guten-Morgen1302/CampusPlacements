@@ -81,12 +81,15 @@ export default function StudentDashboard() {
     { title: "Cover Letter Generator", description: "Generate personalized cover letters", icon: Briefcase, href: "/student/cover-letter", colorClass: "border-neon-cyan/20 hover:border-neon-cyan/40", iconClass: "text-neon-cyan" },
     { title: "Job Recommendations", description: "Find perfect job matches", icon: TrendingUp, href: "/student/jobs", colorClass: "border-neon-purple/20 hover:border-neon-purple/40", iconClass: "text-neon-purple" },
     { title: "Virtual Job Fair", description: "Connect with recruiters live", icon: Video, href: "/student/job-fair", colorClass: "border-neon-pink/20 hover:border-neon-pink/40", iconClass: "text-neon-pink" },
+    { title: "Alumni Connect", description: "Connect with alumni for mentorship", icon: UserCheck, href: "/student/alumni-connect", colorClass: "border-neon-green/20 hover:border-neon-green/40", iconClass: "text-neon-green" },
     { title: "Progress Tracking", description: "Track your career progress", icon: BarChart3, href: "/student/progress", colorClass: "border-neon-green/20 hover:border-neon-green/40", iconClass: "text-neon-green" },
     { title: "Skill Gap Analyzer", description: "Identify and bridge skill gaps", icon: Zap, href: "/student/skill-gap", colorClass: "border-neon-cyan/20 hover:border-neon-cyan/40", iconClass: "text-neon-cyan" },
     { title: "Hackathon Tracker", description: "Find and track hackathons", icon: Trophy, href: "/student/hackathons", colorClass: "border-neon-purple/20 hover:border-neon-purple/40", iconClass: "text-neon-purple" },
-    { title: "Alumni Connect", description: "Connect with alumni for mentorship", icon: UserCheck, href: "/student/alumni-connect", colorClass: "border-neon-green/20 hover:border-neon-green/40", iconClass: "text-neon-green" },
     { title: "Notifications", description: "View your notifications", icon: Bell, href: "/student/notifications", colorClass: "border-neon-pink/20 hover:border-neon-pink/40", iconClass: "text-neon-pink" }
   ];
+
+  console.log("Quick Actions Count:", quickActions.length);
+  console.log("Alumni Connect item:", quickActions.find(a => a.title === "Alumni Connect"));
 
   const recentActivities = [
     { type: "resume", title: "Resume analyzed", time: "2 hours ago", score: 85 },

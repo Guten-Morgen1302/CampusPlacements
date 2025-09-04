@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 // import { TooltipProvider } from "@/components/ui/tooltip";
 import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
+import { AnimatePresence } from "framer-motion";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
@@ -11,6 +12,7 @@ import StudentDashboard from "@/pages/StudentDashboard";
 import RecruiterDashboard from "@/pages/RecruiterDashboard";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ParticleSystem from "@/components/ParticleSystem";
+import PageTransition from "@/components/PageTransition";
 
 // Student Pages
 import StudentDashboardPage from "@/pages/student/Dashboard";
@@ -28,31 +30,33 @@ import RecruiterNotifications from "@/pages/recruiter/Notifications";
 function Router() {
   // Simplified routing without authentication checks for now
   return (
-    <Switch>
-      <Route path="/" component={Landing} />
-      <Route path="/login" component={Login} />
-      
-      {/* Legacy route redirects to new student dashboard */}
-      <Route path="/student" component={StudentDashboardPage} />
-      
-      {/* New Student Multi-Page Routes */}
-      <Route path="/student/dashboard" component={StudentDashboardPage} />
-      <Route path="/student/resume-scanner" component={ResumeScanner} />
-      <Route path="/student/interview-practice" component={InterviewPractice} />
-      <Route path="/student/cover-letter" component={CoverLetterGenerator} />
-      <Route path="/student/job" component={Jobs} />
-      <Route path="/student/jobs" component={Jobs} />
-      <Route path="/student/progress" component={ProgressPage} />
-      <Route path="/student/hackathons" component={HackathonTracker} />
-      <Route path="/student/job-fair" component={JobFair} />
-      <Route path="/student/skill-gap" component={SkillGapAnalyzer} />
-      <Route path="/student/notifications" component={Notifications} />
-      
-      <Route path="/recruiter" component={RecruiterDashboard} />
-      <Route path="/recruiter/notifications" component={RecruiterNotifications} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route component={NotFound} />
-    </Switch>
+    <AnimatePresence mode="wait">
+      <Switch>
+        <Route path="/" component={() => <PageTransition><Landing /></PageTransition>} />
+        <Route path="/login" component={() => <PageTransition><Login /></PageTransition>} />
+        
+        {/* Legacy route redirects to new student dashboard */}
+        <Route path="/student" component={() => <PageTransition><StudentDashboardPage /></PageTransition>} />
+        
+        {/* New Student Multi-Page Routes */}
+        <Route path="/student/dashboard" component={() => <PageTransition><StudentDashboardPage /></PageTransition>} />
+        <Route path="/student/resume-scanner" component={() => <PageTransition><ResumeScanner /></PageTransition>} />
+        <Route path="/student/interview-practice" component={() => <PageTransition><InterviewPractice /></PageTransition>} />
+        <Route path="/student/cover-letter" component={() => <PageTransition><CoverLetterGenerator /></PageTransition>} />
+        <Route path="/student/job" component={() => <PageTransition><Jobs /></PageTransition>} />
+        <Route path="/student/jobs" component={() => <PageTransition><Jobs /></PageTransition>} />
+        <Route path="/student/progress" component={() => <PageTransition><ProgressPage /></PageTransition>} />
+        <Route path="/student/hackathons" component={() => <PageTransition><HackathonTracker /></PageTransition>} />
+        <Route path="/student/job-fair" component={() => <PageTransition><JobFair /></PageTransition>} />
+        <Route path="/student/skill-gap" component={() => <PageTransition><SkillGapAnalyzer /></PageTransition>} />
+        <Route path="/student/notifications" component={() => <PageTransition><Notifications /></PageTransition>} />
+        
+        <Route path="/recruiter" component={() => <PageTransition><RecruiterDashboard /></PageTransition>} />
+        <Route path="/recruiter/notifications" component={() => <PageTransition><RecruiterNotifications /></PageTransition>} />
+        <Route path="/admin" component={() => <PageTransition><AdminDashboard /></PageTransition>} />
+        <Route component={() => <PageTransition><NotFound /></PageTransition>} />
+      </Switch>
+    </AnimatePresence>
   );
 }
 

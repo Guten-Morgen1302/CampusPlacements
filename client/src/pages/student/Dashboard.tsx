@@ -21,7 +21,8 @@ import {
   Zap,
   Bell,
   Briefcase,
-  Video
+  Video,
+  UserCheck
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -83,6 +84,7 @@ export default function StudentDashboard() {
     { title: "Progress Tracking", description: "Track your career progress", icon: BarChart3, href: "/student/progress", colorClass: "border-neon-green/20 hover:border-neon-green/40", iconClass: "text-neon-green" },
     { title: "Skill Gap Analyzer", description: "Identify and bridge skill gaps", icon: Zap, href: "/student/skill-gap", colorClass: "border-neon-cyan/20 hover:border-neon-cyan/40", iconClass: "text-neon-cyan" },
     { title: "Hackathon Tracker", description: "Find and track hackathons", icon: Trophy, href: "/student/hackathons", colorClass: "border-neon-purple/20 hover:border-neon-purple/40", iconClass: "text-neon-purple" },
+    { title: "Alumni Connect", description: "Connect with alumni for mentorship", icon: UserCheck, href: "/student/alumni-connect", colorClass: "border-neon-green/20 hover:border-neon-green/40", iconClass: "text-neon-green" },
     { title: "Notifications", description: "View your notifications", icon: Bell, href: "/student/notifications", colorClass: "border-neon-pink/20 hover:border-neon-pink/40", iconClass: "text-neon-pink" }
   ];
 

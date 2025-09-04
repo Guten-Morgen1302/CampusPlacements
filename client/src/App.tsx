@@ -25,6 +25,7 @@ import HackathonTracker from "@/pages/student/HackathonTracker";
 import JobFair from "@/pages/student/JobFair";
 import SkillGapAnalyzer from "@/pages/student/SkillGapAnalyzer";
 import Notifications from "@/pages/student/Notifications";
+import AlumniConnect from "@/pages/student/AlumniConnect";
 import RecruiterNotifications from "@/pages/recruiter/Notifications";
 
 function Router() {
@@ -50,6 +51,7 @@ function Router() {
         <Route path="/student/job-fair" component={() => <PageTransition><JobFair /></PageTransition>} />
         <Route path="/student/skill-gap" component={() => <PageTransition><SkillGapAnalyzer /></PageTransition>} />
         <Route path="/student/notifications" component={() => <PageTransition><Notifications /></PageTransition>} />
+        <Route path="/student/alumni-connect" component={() => <PageTransition><AlumniConnect /></PageTransition>} />
         
         <Route path="/recruiter" component={() => <PageTransition><RecruiterDashboard /></PageTransition>} />
         <Route path="/recruiter/notifications" component={() => <PageTransition><RecruiterNotifications /></PageTransition>} />

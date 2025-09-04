@@ -25,9 +25,10 @@ const mockApplicationStatusStore: Record<string, string> = {};
 function setupSimpleAuth(app: Express) {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   
-  // Always use database store for session persistence
+  // Use memory store for localhost SQLite development
   let sessionStore;
-  if (process.env.DATABASE_URL) {
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('postgresql://')) {
+    // Only use PostgreSQL session store for actual PostgreSQL databases
     const pgStore = connectPg(session);
     sessionStore = new pgStore({
       conString: process.env.DATABASE_URL,
@@ -37,11 +38,15 @@ function setupSimpleAuth(app: Express) {
       pruneSessionInterval: false, // Disable auto-pruning to avoid index conflicts
       disableTouch: true, // Prevent session touch to avoid conflicts
     });
+  } else {
+    // Use memory store for SQLite or localhost development
+    console.log('Using memory store for sessions (localhost development)');
+    sessionStore = undefined; // Express-session will use memory store by default
   }
   
   app.use(session({
     secret: process.env.SESSION_SECRET || 'firebase-session-secret-change-in-production-replit',
-    store: sessionStore, // Use database store for persistence
+    store: sessionStore, // Use memory store for localhost
     resave: false,
     saveUninitialized: false,
     name: 'connect.sid',

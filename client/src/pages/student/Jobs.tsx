@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import Navigation from "@/components/Navigation";
@@ -314,7 +314,7 @@ export default function Jobs() {
 
   // Utility functions
   const handleBookmark = useCallback((jobId: string) => {
-    setJobs(prev => prev.map(job => 
+    setFilteredJobs(prev => prev.map(job => 
       job.id === jobId ? { ...job, isBookmarked: !job.isBookmarked } : job
     ));
     toast({

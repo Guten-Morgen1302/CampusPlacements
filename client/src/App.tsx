@@ -2,7 +2,7 @@ import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
+// import { TooltipProvider } from "@/components/ui/tooltip";
 import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
@@ -40,6 +40,7 @@ function Router() {
       <Route path="/student/resume-scanner" component={ResumeScanner} />
       <Route path="/student/interview-practice" component={InterviewPractice} />
       <Route path="/student/cover-letter" component={CoverLetterGenerator} />
+      <Route path="/student/job" component={Jobs} />
       <Route path="/student/jobs" component={Jobs} />
       <Route path="/student/progress" component={ProgressPage} />
       <Route path="/student/hackathons" component={HackathonTracker} />
@@ -58,12 +59,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <div className="cyberpunk-bg"></div>
-        {/* <ParticleSystem /> */}
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <div className="cyberpunk-bg"></div>
+      {/* <ParticleSystem /> */}
+      <Toaster />
+      <Router />
     </QueryClientProvider>
   );
 }
